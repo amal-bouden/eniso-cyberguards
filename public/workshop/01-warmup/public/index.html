@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CyberGuard CTF — Rules & Welcome</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding: 0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  code { color:#3fb0ff; }
+</style>
+</head>
+<body>
+<h1>Welcome to CyberGuard CTF 2026</h1>
+<div class="box">
+  <p>Hey there, future hacker! Before you dive into the harder challenges, let's make sure your tools are working.</p>
+  <p>Every good hacker's first habit: <strong>always check the page source.</strong> Browsers let you inspect everything
+  a server sends you — and sometimes developers forget what they leave behind.</p>
+  <p>Rules of the CTF:</p>
+  <ul>
+    <li>No attacking the scoring platform itself — only the challenge targets.</li>
+    <li>No sharing flags with other teams.</li>
+    <li>Have fun and ask a mentor if you're stuck for more than 15 minutes.</li>
+  </ul>
+  <p>Good luck. The flag format is always <code>ECCC{...}</code>.</p>
+</div>
+
+<!--
+  You found it! This is exactly the habit that breaks real websites too --
+  developers sometimes leave secrets, comments, or debug info in HTML/JS
+  that never should have shipped to production. Always read what you're sent.
+
+  One more habit worth building: before poking around a website, a lot of
+  real pentesters check /robots.txt first. It's meant to tell search engine
+  crawlers what NOT to index -- but that file is public, and site owners
+  sometimes use it to "hide" pages by just telling search engines to ignore
+  them, forgetting that anyone (not just Google) can read robots.txt too.
+
+  This site has one. Go take a look.
+-->
+</body>
+</html>

@@ -1,0 +1,25 @@
+--- CONFIDENTIAL: INTERNAL HR DRAFT (found on an unattended printer) ---
+[Note: names and details below are entirely fictional, for training purposes only.]
+
+CANDIDATE PROFILE - Summer Internship Application
+
+Name: Yassine R.
+Applying for: Junior DevOps Intern, CyberGuard Labs (fictional company)
+Hometown: Sousse, Tunisia
+University: ENISo, Computer Engineering, Class of 2021
+
+Summary:
+Enthusiastic recent graduate with a passion for automation and a slightly
+worrying habit of reusing personal details in throwaway accounts. Team
+lead on the university robotics club for two years. Enjoys chess,
+competitive typing, and taking care of his cat.
+
+Skills: Python, Bash, Docker, basic networking
+Hobbies: Chess (rated ~1400), amateur photography, cat dad to a rescue
+cat named "Nimbus"
+
+Note from reviewer: candidate mentioned in his cover letter that he
+"always forgets passwords for practice/test accounts, so I just use
+something memorable I'll never forget" - see attached forum screenshot
+for more on that habit. Might be worth a friendly word about password
+hygiene before he starts.

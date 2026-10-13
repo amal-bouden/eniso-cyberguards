@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Crack Me If You Can</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding:0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  a { color:#3fb0ff; }
+  code { color:#ffcc4d; }
+</style></head>
+<body>
+<h1>Crack Me If You Can</h1>
+<div class="box">
+  <p>A small Linux access-terminal binary was found on a retired lab machine. It asks for an
+  "unlock code" and tells you if you got it right &mdash; but running <code>strings</code> on it
+  won't hand you anything useful, even if you skip straight to the end.</p>
+  <p><a href="crackme.zip">crackme.zip</a> (contains the Linux x86-64 binary)</p>
+  <p><em>Hints:</em></p>
+  <ul>
+    <li>Disassemble it with <code>objdump -d ./crackme</code> or open it in Ghidra/IDA.</li>
+    <li>Find the function that compares your input against a stored byte array - that's the
+      "unlock code" check. Figure out the per-character transform being applied, then write it
+      in reverse to recover the correct unlock code.</li>
+    <li>The unlock code itself won't look like a flag, and that's intentional &mdash; it's a key,
+      not the answer. What happens when you actually type it in?</li>
+  </ul>
+</div>
+</body></html>

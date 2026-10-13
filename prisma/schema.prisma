@@ -1,0 +1,57 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  username      String       @unique
+  email         String       @unique
+  passwordHash  String
+  role          String       @default("MEMBER")
+  createdAt     DateTime     @default(now())
+  solves        Solve[]
+  inviteCode    InviteCode?  @relation(fields: [inviteCodeId], references: [id])
+  inviteCodeId  String?
+}
+
+model Challenge {
+  id                String   @id @default(cuid())
+  title             String
+  category          String
+  description       String
+  points            Int
+  flagHash          String
+  flagSalt          String
+  hint              String?
+  instanceUrl       String?  // Base target URL / host e.g. https://challs.cyberguards.io/web101 or nc pwn.cyberguards.io 9000
+  isPerUserInstance Boolean  @default(true) // Generates unique user instance link e.g. https://{username}-web101.challs.cyberguards.io
+  isDraft           Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  solves            Solve[]
+}
+
+model Solve {
+  id          String    @id @default(cuid())
+  userId      String
+  challengeId String
+  solvedAt    DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+}
+
+model InviteCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  maxUses   Int      @default(1)
+  uses      Int      @default(0)
+  expiresAt DateTime?
+  users     User[]
+}

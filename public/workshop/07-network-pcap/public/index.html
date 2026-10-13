@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Whispers on the Wire</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding:0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  a { color:#3fb0ff; }
+  code { color:#ffcc4d; }
+</style></head>
+<body>
+<h1>Whispers on the Wire</h1>
+<div class="box">
+  <p>A packet capture from the old lab network was found on a decommissioned switch. Someone was logging
+  into a server that really should not still exist in 2026.</p>
+  <p><a href="lab_capture.pcap">lab_capture.pcap</a></p>
+  <p><em>Hints:</em></p>
+  <ul>
+    <li>Open it in Wireshark, find the TCP conversation on port 23, right-click a packet in that
+      stream, and choose "Follow &rarr; TCP Stream" to read the whole session as plaintext.</li>
+    <li>What comes back from <code>cat capture_the_flag.txt</code> isn't in flag format yet &mdash;
+      the file itself was stored encoded. Does it look like a format you've seen in another
+      challenge today?</li>
+  </ul>
+</div>
+</body></html>

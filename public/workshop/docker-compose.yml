@@ -1,0 +1,56 @@
+version: "3.9"
+
+# CyberGuard CTF Workshop - challenge infrastructure
+#
+# Static, file-based challenges (warmup, crypto, forensics, stego, OSINT,
+# networking, reverse) are all served by one nginx container, each on its
+# own path - but ONLY the `public/` subfolder of each challenge is mounted.
+# Anything outside `public/` (source code, solutions, raw binaries used only
+# to build an image) is never reachable over HTTP, even by guessing a URL.
+#
+# Flags are never stored as plain files in this project. They're injected at
+# build/run time from a LOCAL-ONLY `.env` file (see .env.example) that you
+# must create yourself and NEVER share, zip, or commit alongside the rest of
+# this project.
+#
+# Usage:
+#   cp .env.example .env    # then edit .env with your real flags
+#   docker compose up -d --build
+#   Static challenges:  http://<host>:8080/
+#   Web SQLi challenge: http://<host>:5001/
+#   Pwn challenge:      nc <host> 9002
+
+services:
+  static-challenges:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./01-warmup/public:/usr/share/nginx/html/01-warmup:ro
+      - ./03-crypto-vigenere/public:/usr/share/nginx/html/03-crypto-vigenere:ro
+      - ./04-forensics-exif/public:/usr/share/nginx/html/04-forensics-exif:ro
+      - ./05-stego-lsb/public:/usr/share/nginx/html/05-stego-lsb:ro
+      - ./06-osint-intern/public:/usr/share/nginx/html/06-osint-intern:ro
+      - ./07-network-pcap/public:/usr/share/nginx/html/07-network-pcap:ro
+      - ./08-reverse-crackme/public:/usr/share/nginx/html/08-reverse-crackme:ro
+      - ./09-pwn-stackoverflow/public:/usr/share/nginx/html/09-pwn-stackoverflow:ro
+      - ./nginx-index.html:/usr/share/nginx/html/index.html:ro
+      - ./nginx-noautoindex.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
+  web-sqli:
+    build: ./02-web-sqli
+    ports:
+      - "5001:5001"
+    environment:
+      CHALLENGE_FLAG: "${WEB_SQLI_FLAG:?Set WEB_SQLI_FLAG in your .env file}"
+    restart: unless-stopped
+
+  pwn-stackwarmup:
+    build:
+      context: ./09-pwn-stackoverflow
+      args:
+        FLAG: "${PWN_FLAG:?Set PWN_FLAG in your .env file}"
+    ports:
+      - "9002:9002"
+    restart: unless-stopped

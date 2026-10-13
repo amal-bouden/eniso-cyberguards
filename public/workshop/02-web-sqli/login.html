@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CyberGuard Club Intranet — Login</title>
+  <style>
+    body { background:#0a0e12; color:#dbe4e8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width:420px; margin:80px auto; padding: 0 16px; }
+    h2 { color:#39ff8f; font-family: monospace; }
+    input { width:100%; padding:10px; margin:6px 0 14px; background:#10161c; border:1px solid #1f2b33; color:#fff; border-radius:6px; box-sizing:border-box;}
+    button { background:#39ff8f; color:#04140a; border:none; padding:10px 18px; border-radius:6px; font-weight:bold; cursor:pointer; }
+    .msg { padding:10px; border-radius:6px; margin-bottom:14px; }
+    .err { background:rgba(255,92,92,0.15); color:#ff5c5c; border:1px solid rgba(255,92,92,0.4); }
+    .ok { background:rgba(57,255,143,0.15); color:#39ff8f; border:1px solid rgba(57,255,143,0.4); }
+    code { color:#3fb0ff; }
+  </style>
+</head>
+<body>
+  <h2>&gt; CyberGuard Intranet Login</h2>
+  <p>Internal member login portal. Forgot your password? Ask a club officer.</p>
+  <form method="POST" action="/ctf-targets/broken-auth">
+    <label>Username</label>
+    <input name="username" placeholder="e.g. admin or guest" autocomplete="off">
+    <label>Password</label>
+    <input name="password" type="password" placeholder="••••••••••••" autocomplete="off">
+    <button type="submit">Sign in</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Stack Warmup</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding:0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  a { color:#3fb0ff; }
+  code { color:#ffcc4d; }
+  pre { background:#000; padding:10px; border-radius:6px; overflow-x:auto; }
+</style></head>
+<body>
+<h1>Stack Warmup</h1>
+<div class="box">
+  <p>A practice terminal is running on the lab network. It logs your name... into a buffer that's smaller
+  than what it actually reads. There's a function called <code>win()</code> in the binary that nobody ever
+  calls. Or is it never called?</p>
+  <p>Connect with:</p>
+  <pre>nc &lt;host&gt; 9002</pre>
+  <p>Download the exact binary running on the server (same file, so addresses will match):</p>
+  <p><a href="vuln.zip">vuln.zip</a> (contains binary + source)</p>
+  <p><em>Hints:</em></p>
+  <ul>
+    <li><code>objdump -d ./vuln</code> to find the address of <code>win</code>.</li>
+    <li>The vulnerable buffer is 64 bytes; find out how many bytes come before the saved return address
+      (hint: there's also a saved base pointer in between).</li>
+    <li>This binary has no stack canary and no PIE &mdash; on purpose, for your first overflow.</li>
+    <li>pwntools' <code>p64()</code> is the easiest way to pack the address in the right byte order.</li>
+    <li>What <code>win()</code> prints once you redirect execution there isn't in flag format yet
+      &mdash; you'll recognize the pattern from elsewhere in this CTF.</li>
+  </ul>
+</div>
+</body></html>

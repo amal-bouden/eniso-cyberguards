@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Pixels Never Lie</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding:0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  a { color:#3fb0ff; }
+  img { max-width: 100%; border-radius: 8px; margin: 12px 0; border:1px solid #1f2b33;}
+</style></head>
+<body>
+<h1>Pixels Never Lie</h1>
+<div class="box">
+  <p>This image was shared in the club's general chat as "just a cool wallpaper." One of the mentors
+  says it's about 4 KB heavier than it should be for its dimensions and colour count. That's suspicious.</p>
+  <img src="digital_noise.png" alt="digital noise cover image">
+  <p><a href="digital_noise.png">Download digital_noise.png</a></p>
+  <p><em>Hints:</em></p>
+  <ul>
+    <li>The least significant bit of each colour channel can carry hidden information without
+      visibly changing the image. Try writing a small Python script with Pillow to read the red
+      channel's LSB of every pixel, in order &mdash; the first 32 bits tell you how many bytes of
+      hidden data follow.</li>
+    <li>If what you extract doesn't look like a readable flag, don't assume you did it wrong &mdash;
+      look at the image itself again. Not everything in this challenge is hidden in the pixels.</li>
+  </ul>
+</div>
+</body></html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Metadata Doesn't Lie</title>
+<style>
+  body { background:#0a0e12; color:#dbe4e8; font-family: 'Courier New', monospace; max-width: 700px; margin: 60px auto; line-height:1.7; padding:0 20px;}
+  h1 { color:#39ff8f; }
+  .box { border:1px solid #1f2b33; background:#10161c; padding:20px; border-radius:8px; }
+  a { color:#3fb0ff; }
+  code { color: #ffcc4d; }
+</style></head>
+<body>
+<h1>Metadata Doesn't Lie</h1>
+<div class="box">
+  <p>This photo from last year's workshop was uploaded to the club drive. Nothing looks unusual about it at
+  first glance &mdash; but photo files carry a lot more information than what you can see.</p>
+  <p><a href="event_photo.jpg">event_photo.jpg</a></p>
+  <p><em>Hints:</em></p>
+  <ul>
+    <li>Try tools like <code>exiftool</code>, or even just <code>strings</code>, on the downloaded file.</li>
+    <li>Don't stop at the first metadata field you find useful &mdash; check all of them.</li>
+    <li>If a string of text ends in <code>=</code> or <code>==</code> and only contains letters, digits,
+      <code>+</code> and <code>/</code>, that's a strong sign it's base64.</li>
+  </ul>
+</div>
+</body></html>

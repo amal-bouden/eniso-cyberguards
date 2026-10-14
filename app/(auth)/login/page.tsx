@@ -16,16 +16,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [consoleOpen, setConsoleOpen] = useState(false);
 
-  // Quick Demo Logins
-  const handleQuickLogin = (userType: 'admin' | 'member') => {
-    if (userType === 'admin') {
-      setIdentifier('admin');
-      setPassword('CyberGuards2026!');
-    } else {
-      setIdentifier('matrix_hacker');
-      setPassword('User123!');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +37,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Authentication failed');
+        setError('Invalid credentials. Please try again.');
         return;
       }
 
@@ -57,8 +47,8 @@ export default function LoginPage() {
         router.push('/challenges');
       }
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+    } catch {
+      setError('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -86,26 +76,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Quick Demo Autofill Bar */}
-          <div className="p-3 bg-[#0b0f19] border border-[#1e293b] rounded-lg font-mono-code space-y-2">
-            <div className="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">DEMO OPERATIVE CREDENTIALS:</div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('member')}
-                className="py-1.5 px-2.5 bg-[#131c2e] hover:bg-[#18243b] text-slate-200 rounded border border-[#1e293b] text-[11px] font-medium transition-all text-left truncate"
-              >
-                👤 Member Demo
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin')}
-                className="py-1.5 px-2.5 bg-[#131c2e] hover:bg-[#18243b] text-rose-400 rounded border border-rose-900/40 text-[11px] font-medium transition-all text-left truncate"
-              >
-                🔑 Admin Demo
-              </button>
-            </div>
-          </div>
 
           {/* Error Message */}
           {error && (
@@ -125,7 +95,7 @@ export default function LoginPage() {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="matrix_hacker or admin"
+                placeholder="username or email"
                 className="w-full bg-[#0b0f19] border border-[#1e293b] focus:border-blue-500 rounded-lg px-3.5 py-2 text-xs font-mono-code text-white placeholder:text-slate-500 outline-none transition-all"
               />
             </div>

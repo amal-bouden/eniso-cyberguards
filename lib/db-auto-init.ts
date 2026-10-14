@@ -93,18 +93,7 @@ async function runAutoInit() {
         create: { code: 'ENISO-JOIN-2026', maxUses: 50, uses: 0 }
       });
 
-      // B: Admin user
-      await prisma.user.upsert({
-        where: { username: 'admin' },
-        update: {},
-        create: {
-          username: 'admin',
-          email: 'admin@cyberguards.tn',
-          passwordHash: hashPassword('CyberGuards2026!'),
-          role: 'ADMIN',
-          inviteCodeId: inv1.id
-        }
-      });
+      // B: Admin user (FLUTTERSHY only)
       await prisma.user.upsert({
         where: { username: 'FLUTTERSHY' },
         update: {},

@@ -5,14 +5,14 @@ import Navbar from '@/components/Navbar';
 import CommandConsoleOverlay from '@/components/CommandConsoleOverlay';
 import ChallengeGrid from '@/components/ChallengeGrid';
 import { ChallengeItem } from '@/components/FlagSubmissionModal';
-import { Flag, RefreshCw, AlertCircle } from 'lucide-react';
+import { Flag, RefreshCw } from 'lucide-react';
 
 export default function ChallengesPage() {
   const [challenges, setChallenges] = useState<ChallengeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<'MEMBER' | 'ADMIN' | undefined>(undefined);
   const [consoleOpen, setConsoleOpen] = useState(false);
-  const [error, setError] = useState('');
+  const [_hasError, setHasError] = useState(false);
 
   useEffect(() => {
     fetchChallenges();
@@ -31,17 +31,19 @@ export default function ChallengesPage() {
 
   const fetchChallenges = async () => {
     setLoading(true);
-    setError('');
+    setHasError(false);
     try {
       const res = await fetch('/api/challenges');
       const data = await res.json();
       if (res.ok && data.challenges) {
         setChallenges(data.challenges);
       } else {
-        setError(data.error || 'Failed to load challenges');
+        setHasError(true);
+        setChallenges([]);
       }
-    } catch (e: any) {
-      setError('Network connection error while fetching challenges.');
+    } catch {
+      setHasError(true);
+      setChallenges([]);
     } finally {
       setLoading(false);
     }
@@ -82,13 +84,7 @@ export default function ChallengesPage() {
           </div>
         </div>
 
-        {/* Error Banner */}
-        {error && (
-          <div className="p-3.5 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-lg text-xs font-mono-code flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
+
 
         {/* Loading State */}
         {loading && challenges.length === 0 ? (

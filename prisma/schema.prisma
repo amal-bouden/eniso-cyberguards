@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+  // Note: runtime connections use libsql via driver adapter in lib/prisma.ts
 }
 
 model User {

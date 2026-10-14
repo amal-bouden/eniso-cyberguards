@@ -3,9 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { checkSameOrigin, getSessionUser } from '@/lib/auth';
 import { generateSalt, hashFlag } from '@/lib/crypto';
 import { getChallengeEnhancements } from '@/lib/challenge-files';
+import { ensureDatabaseInitialized } from '@/lib/db-auto-init';
 
 export async function GET(req: NextRequest) {
   try {
+    await ensureDatabaseInitialized();
     const user = await getSessionUser();
     const isAdmin = user?.role === 'ADMIN';
 

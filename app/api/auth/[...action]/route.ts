@@ -3,11 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { hashPassword, verifyPassword, signSession } from '@/lib/crypto';
 import { COOKIE_NAME, checkSameOrigin, getSessionUser } from '@/lib/auth';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { ensureDatabaseInitialized } from '@/lib/db-auto-init';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ action: string[] }> }
 ) {
+  await ensureDatabaseInitialized();
   const resolvedParams = await params;
   const action = resolvedParams.action?.[0];
 
@@ -23,6 +25,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ action: string[] }> }
 ) {
+  await ensureDatabaseInitialized();
   if (!checkSameOrigin(req)) {
     return NextResponse.json({ error: 'Invalid origin request header' }, { status: 403 });
   }

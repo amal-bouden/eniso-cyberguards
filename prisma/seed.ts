@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ENISO CyberGuards — Production Seed
  *
  * Creates the admin account and starter invite codes ONLY.
@@ -9,10 +9,9 @@
  * WARNING: This wipes all existing users, solves, and invite codes.
  * Run only on a fresh database or when resetting the platform.
  */
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import crypto from 'crypto';
 
-const prisma = new PrismaClient();
 
 function generateSalt(): string {
   return crypto.randomBytes(16).toString('hex');

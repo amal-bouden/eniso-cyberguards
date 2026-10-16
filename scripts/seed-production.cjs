@@ -13,12 +13,12 @@ function generateSalt() {
 
 function hashPassword(password) {
   const salt = generateSalt();
-  const hash = crypto.createHmac('sha256', salt).update(password).digest('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
   return `${salt}:${hash}`;
 }
 
 function hashFlag(flag, salt) {
-  return crypto.createHmac('sha256', salt).update(flag).digest('hex');
+  return crypto.createHash('sha256').update(flag.trim() + salt).digest('hex');
 }
 
 function cuid() {

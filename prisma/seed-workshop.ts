@@ -10,10 +10,8 @@
  * Safe to re-run: existing challenges are updated in-place (updating descriptions,
  * hints, flags, and points) without duplicating records or breaking existing solves.
  */
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import crypto from 'crypto';
-
-const prisma = new PrismaClient();
 
 function generateSalt(): string {
   return crypto.randomBytes(16).toString('hex');
@@ -277,9 +275,12 @@ async function main() {
   console.log('All upgraded workshop challenges are now live in the database.');
 }
 
-main()
-  .catch((e) => {
-    console.error('Import error:', e);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+if (typeof process !== 'undefined' && process.argv[1] && process.argv[1].replace(/\\/g, '/').includes('seed-workshop')) {
+  main()
+    .catch((e) => {
+      console.error('Import error:', e);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}
+

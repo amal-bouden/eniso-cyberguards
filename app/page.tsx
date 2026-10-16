@@ -77,7 +77,7 @@ export default function MemberPortalHome() {
       setStats({
         challenges: challengesList.length,
         solves: totalSolves,
-        members: scoreData.leaderboard?.length || 0,
+        members: scoreData.totalOperatives ?? scoreData.leaderboard?.length ?? 0,
         firstBloods: totalFirstBloods,
       });
     } catch (e) {
@@ -223,7 +223,7 @@ export default function MemberPortalHome() {
               <Shield className="w-4 h-4 text-blue-400" />
             </div>
             <div className="text-2xl font-mono-code font-bold text-white">
-              {stats.members || 3}
+              {stats.members}
             </div>
             <p className="text-[11px] text-slate-400 font-mono-code">Recruited Members</p>
           </div>
@@ -234,7 +234,7 @@ export default function MemberPortalHome() {
               <Flag className="w-4 h-4 text-amber-400" />
             </div>
             <div className="text-2xl font-mono-code font-bold text-white">
-              {stats.challenges || 6}
+              {stats.challenges}
             </div>
             <p className="text-[11px] text-slate-400 font-mono-code">Per-Member Targets</p>
           </div>
@@ -245,7 +245,7 @@ export default function MemberPortalHome() {
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-2xl font-mono-code font-bold text-emerald-400">
-              {stats.solves || 4}
+              {stats.solves}
             </div>
             <p className="text-[11px] text-slate-400 font-mono-code">Flags Submitted</p>
           </div>
@@ -256,7 +256,7 @@ export default function MemberPortalHome() {
               <Flame className="w-4 h-4 text-rose-500" />
             </div>
             <div className="text-2xl font-mono-code font-bold text-rose-400">
-              {stats.firstBloods || 2}
+              {stats.firstBloods}
             </div>
             <p className="text-[11px] text-slate-400 font-mono-code">Speed Exploits</p>
           </div>

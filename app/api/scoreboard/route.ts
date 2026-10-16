@@ -120,9 +120,12 @@ export async function GET() {
       };
     });
 
+    const totalOperatives = await prisma.user.count();
+
     return NextResponse.json({
       leaderboard: rankedLeaderboard,
       feed: formattedFeed,
+      totalOperatives,
       timestamp: new Date().toISOString(),
     });
   } catch (e: any) {

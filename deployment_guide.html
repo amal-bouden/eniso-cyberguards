@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ENISO CyberGuards - Production Deployment Handover Guide</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    font-size: 8.5pt;
+    line-height: 1.35;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 4px solid #06b6d4;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .badge {
+    background: rgba(6, 182, 212, 0.2);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .title {
+    font-size: 16pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin-bottom: 2px;
+  }
+
+  .subtitle {
+    font-size: 8.5pt;
+    color: #94a3b8;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 7.5pt;
+  }
+
+  .meta-item strong {
+    display: block;
+    color: #64748b;
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .meta-item span {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 3px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  h2 .step-num {
+    background: #0284c7;
+    color: #ffffff;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #334155;
+    margin: 6px 0 3px 0;
+  }
+
+  p {
+    margin-bottom: 4px;
+    color: #334155;
+  }
+
+  .callout {
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin: 6px 0;
+    font-size: 8pt;
+    display: flex;
+    gap: 8px;
+  }
+
+  .callout-warning {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    color: #92400e;
+  }
+
+  .callout-info {
+    background: #f0f9ff;
+    border-left: 3px solid #0284c7;
+    color: #075985;
+  }
+
+  .callout-success {
+    background: #f0fdf4;
+    border-left: 3px solid #16a34a;
+    color: #166534;
+  }
+
+  pre, code {
+    font-family: "Consolas", "Courier New", monospace;
+  }
+
+  code.inline {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 3px;
+    border-radius: 3px;
+    font-size: 7.5pt;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+  }
+
+  pre.code-block {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 4px 0 6px 0;
+    border: 1px solid #1e293b;
+  }
+
+  pre.code-block .comment {
+    color: #64748b;
+  }
+
+  pre.code-block .highlight {
+    color: #38bdf8;
+    font-weight: bold;
+  }
+
+  pre.code-block .val {
+    color: #34d399;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4px 0 8px 0;
+    font-size: 7.5pt;
+  }
+
+  th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    text-align: left;
+    padding: 4px 6px;
+    border: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    font-size: 6.5pt;
+    letter-spacing: 0.04em;
+  }
+
+  td {
+    padding: 4px 6px;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    vertical-align: middle;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  ul.task-list {
+    list-style: none;
+    margin: 4px 0;
+  }
+
+  ul.task-list li {
+    padding: 1px 0 1px 18px;
+    position: relative;
+    color: #334155;
+    font-size: 8pt;
+  }
+
+  ul.task-list li::before {
+    content: "☐";
+    position: absolute;
+    left: 2px;
+    color: #0284c7;
+    font-size: 9pt;
+    top: -1px;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .footer-note {
+    margin-top: 10px;
+    padding-top: 6px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 7pt;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= PAGE 1 ================= -->
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <span class="badge">Team Handover Briefing</span>
+      <span style="color: #94a3b8; font-size: 7.5pt;">ENISO CyberGuards CTF</span>
+    </div>
+    <div class="title">Production Deployment Guide</div>
+    <div class="subtitle">Complete technical guide for deploying the platform and configuring the cloud database.</div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <strong>Repository</strong>
+        <span>amal-bouden/eniso-cyberguards</span>
+      </div>
+      <div class="meta-item">
+        <strong>Branch</strong>
+        <span>main (clean & pushed)</span>
+      </div>
+      <div class="meta-item">
+        <strong>Tech Stack</strong>
+        <span>Next.js 16 + Prisma + Turso</span>
+      </div>
+      <div class="meta-item">
+        <strong>Deployment Target</strong>
+        <span>Vercel + Turso Cloud DB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXT CALLOUT -->
+  <div class="callout callout-warning">
+    <div style="font-size: 11pt;">⚠️</div>
+    <div>
+      <strong>Context:</strong>
+      All application code, Prisma driver adapters, and seed scripts are tested, committed, and pushed to <strong>GitHub (<code class="inline">main</code>)</strong>. The local machine had database connectivity issues with the remote Turso instance. Follow the steps below to connect a fresh remote database and deploy on Vercel.
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div>
+    <h2><span class="step-num">1</span> Clone & Pull Latest Code</h2>
+    <p>Ensure you are working with the latest commits on the <code class="inline">main</code> branch:</p>
+    <pre class="code-block"><span class="comment"># Clone repository (or pull latest)</span>
+git clone https://github.com/amal-bouden/eniso-cyberguards.git
+cd eniso-cyberguards
+git checkout main
+git pull origin main
+npm install</pre>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div>
+    <h2><span class="step-num">2</span> Setup Cloud Database (Turso / LibSQL)</h2>
+    <p>
+      In serverless environments like Vercel, local SQLite files are read-only and ephemeral. The platform is configured to use <strong>Turso</strong> (Serverless SQLite over HTTP/WebSocket via <code class="inline">@libsql/client</code>).
+    </p>
+
+    <h3>Option A: Fast Turso CLI (2 minutes):</h3>
+    <pre class="code-block"><span class="comment"># Install Turso CLI:</span>
+<span class="comment"># Windows (PowerShell):</span> irm https://get.tur.so/install.ps1 | iex
+<span class="comment"># macOS / Linux:</span> curl -sSfL https://get.tur.so/install.sh | bash
+
+<span class="comment"># Login and create database:</span>
+turso auth login
+turso db create eniso-ctf-prod
+
+<span class="comment"># Get the Database URL:</span>
+turso db show eniso-ctf-prod --url
+<span class="comment"># Output format: libsql://eniso-ctf-prod-[your-org].turso.io</span>
+
+<span class="comment"># Generate permanent Auth Token:</span>
+turso db tokens create eniso-ctf-prod
+<span class="comment"># Copy the JWT string generated</span></pre>
+    <p style="font-size: 7.5pt; color: #64748b;"><em>Option B: You can also use the web UI at <strong>https://turso.tech</strong> (sign in with GitHub &gt; Create Database &gt; Generate Token).</em></p>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div>
+    <h2><span class="step-num">3</span> Environment Variables Configuration</h2>
+    <p>Create a local <code class="inline">.env</code> file (and set these inside the Vercel Project Settings):</p>
+    <pre class="code-block"><span class="comment"># 1. Database Connection (Turso)</span>
+<span class="highlight">DATABASE_URL</span>=<span class="val">"libsql://eniso-ctf-prod-[your-org].turso.io"</span>
+<span class="highlight">TURSO_DATABASE_URL</span>=<span class="val">"libsql://eniso-ctf-prod-[your-org].turso.io"</span>
+<span class="highlight">TURSO_AUTH_TOKEN</span>=<span class="val">"eyJhbGciOi..."</span>
+
+<span class="comment"># 2. Security & Auth Session Secret (64-character hex string)</span>
+<span class="highlight">JWT_SECRET</span>=<span class="val">"e1a4d98f7c32084c8a45291b70cfef839218d6a894a73e51d9bc4901f4a9b6c2"</span>
+
+<span class="comment"># 3. Emergency Admin Master Setup Code</span>
+<span class="highlight">SETUP_CODE</span>=<span class="val">"CYBERGUARDS-ADMIN-SETUP-2026"</span></pre>
+  </div>
+
+  <div class="footer-note">
+    <span>ENISO CyberGuards CTF Platform • Handover Documentation</span>
+    <span>Page 1 of 2</span>
+  </div>
+
+  <!-- ================= PAGE 2 ================= -->
+  <div class="page-break"></div>
+
+  <!-- SECTION 4 -->
+  <div>
+    <h2><span class="step-num">4</span> One-Click Database Seeding</h2>
+    <p>
+      A standalone seed script (<code class="inline">scripts/seed-production.cjs</code>) is included. It connects directly via the LibSQL client, creates all tables, and provisions the admin and challenge catalog:
+    </p>
+
+    <pre class="code-block"><span class="comment"># Run standalone seed script (requires TURSO_DATABASE_URL & TURSO_AUTH_TOKEN in .env)</span>
+node scripts/seed-production.cjs</pre>
+
+    <div class="callout callout-success">
+      <div style="font-size: 11pt;">✅</div>
+      <div>
+        <strong>What is automatically created:</strong>
+        <ul style="margin: 2px 0 0 14px; font-size: 7.5pt;">
+          <li>All SQL Tables: <code class="inline">User</code>, <code class="inline">Challenge</code>, <code class="inline">Solve</code>, <code class="inline">InviteCode</code>.</li>
+          <li>All <strong>9 CTF Challenges</strong> with flags, points, hints, categories, and instance URLs.</li>
+          <li>Default Admin Account: <code class="inline">FLUTTERSHY</code> (<code class="inline">boudenammal02@gmail.com</code>).</li>
+          <li>Active Invite Codes: <code class="inline">SPARTAN-2026-CTF</code> (100 uses) and <code class="inline">ENISO-JOIN-2026</code> (50 uses).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div>
+    <h2><span class="step-num">5</span> Deploying to Vercel</h2>
+    <p>Follow these steps to deploy on Vercel:</p>
+
+    <ul class="task-list">
+      <li>Log in to <a href="https://vercel.com">https://vercel.com</a> and click <strong>Add New Project</strong>.</li>
+      <li>Import Git repository: <strong>amal-bouden/eniso-cyberguards</strong>.</li>
+      <li>Framework Preset: <strong>Next.js</strong> (automatically detected).</li>
+      <li>Build Command: Leave default or ensure it runs <code class="inline">prisma generate; next build</code> (already configured in <code class="inline">package.json</code>).</li>
+      <li><strong>Add Environment Variables</strong> under Project Settings &gt; Environment Variables:</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Variable Name</th>
+          <th>Description</th>
+          <th>Example / Value</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="inline">DATABASE_URL</code></td>
+          <td>Turso DB URL</td>
+          <td><code class="inline">libsql://eniso-ctf-prod-*.turso.io</code></td>
+          <td><strong style="color: #dc2626;">Yes</strong></td>
+        </tr>
+        <tr>
+          <td><code class="inline">TURSO_DATABASE_URL</code></td>
+          <td>LibSQL URL</td>
+          <td>Same as DATABASE_URL</td>
+          <td><strong style="color: #dc2626;">Yes</strong></td>
+        </tr>
+        <tr>
+          <td><code class="inline">TURSO_AUTH_TOKEN</code></td>
+          <td>Turso JWT Token</td>
+          <td><code class="inline">eyJhbGciOi...</code></td>
+          <td><strong style="color: #dc2626;">Yes</strong></td>
+        </tr>
+        <tr>
+          <td><code class="inline">JWT_SECRET</code></td>
+          <td>Auth Session Secret</td>
+          <td>64-char random hex string</td>
+          <td><strong style="color: #dc2626;">Yes</strong></td>
+        </tr>
+        <tr>
+          <td><code class="inline">SETUP_CODE</code></td>
+          <td>Emergency Admin Setup</td>
+          <td><code class="inline">CYBERGUARDS-ADMIN-SETUP-2026</code></td>
+          <td><strong style="color: #dc2626;">Yes</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre class="code-block"><span class="comment"># Or deploy via Vercel CLI from repository root:</span>
+npm install -g vercel
+vercel --prod</pre>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div>
+    <h2><span class="step-num">6</span> Pre-Seeded Credentials & Access</h2>
+    <p>Use these credentials to log in and administer the competition:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Account Type</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Default Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color: #0284c7;">Main Administrator</strong></td>
+          <td><code class="inline">FLUTTERSHY</code></td>
+          <td>boudenammal02@gmail.com</td>
+          <td><code class="inline">SpartanAdmin2026!</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Active Participant Invite Codes</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Invite Code</th>
+          <th>Max Uses</th>
+          <th>Audience</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="inline">SPARTAN-2026-CTF</code></td>
+          <td>100 uses</td>
+          <td>ENISO Students / CTF Participants</td>
+          <td>Main CTF registration code</td>
+        </tr>
+        <tr>
+          <td><code class="inline">ENISO-JOIN-2026</code></td>
+          <td>50 uses</td>
+          <td>Workshop Attendees / Guests</td>
+          <td>Secondary / Workshop code</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div>
+    <h2><span class="step-num">7</span> Troubleshooting & Tips</h2>
+
+    <div class="callout callout-info" style="margin-bottom: 4px;">
+      <div style="font-size: 11pt;">💡</div>
+      <div>
+        <strong>Prisma on Vercel Linux:</strong>
+        Commit <code class="inline">6812aad</code> already configured <code class="inline">binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x", "linux-musl"]</code> in <code class="inline">prisma/schema.prisma</code>, preventing binary mismatch errors during Vercel builds.
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <div style="font-size: 11pt;">💡</div>
+      <div>
+        <strong>Auto-Initialization:</strong>
+        The platform features an automatic self-initializing hook in <code class="inline">lib/db-auto-init.ts</code>. If the database is connected but empty, the application will automatically create the tables and seed the challenges on the first page request.
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-note">
+    <span>ENISO CyberGuards CTF Platform • Handover Documentation</span>
+    <span>Page 2 of 2</span>
+  </div>
+
+</body>
+</html>

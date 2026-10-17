@@ -1,6 +1,20 @@
 const { createClient } = require('@libsql/client');
 const crypto = require('crypto');
 
+const fs = require('fs');
+if (fs.existsSync('.env')) {
+  const envContent = fs.readFileSync('.env', 'utf8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const idx = trimmed.indexOf('=');
+      const k = trimmed.substring(0, idx).trim();
+      const v = trimmed.substring(idx + 1).trim().replace(/^["']|["']$/g, '');
+      if (!process.env[k]) process.env[k] = v;
+    }
+  }
+}
+
 const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
@@ -23,10 +37,10 @@ async function main() {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.createHash('sha256').update(ch.flag.trim() + salt).digest('hex');
     await db.execute({
-      sql: 'UPDATE Challenge SET flagSalt = ?, flagHash = ? WHERE title = ?',
+      sql: 'UPDATE Challenge SET flagSalt = ?, flagHash = ?, isDraft = 0 WHERE title = ?',
       args: [salt, hash, ch.title]
     });
-    console.log(`✅ Updated flag hash for: "${ch.title}"`);
+    console.log(`✅ Updated flag hash & published: "${ch.title}"`);
   }
   console.log('\n🎉 All 9 challenge flag hashes synchronized with lib/crypto.ts algorithm!');
 }

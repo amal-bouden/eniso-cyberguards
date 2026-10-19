@@ -15,14 +15,6 @@
   "unlock code" and tells you if you got it right &mdash; but running <code>strings</code> on it
   won't hand you anything useful, even if you skip straight to the end.</p>
   <p><a href="crackme.zip">crackme.zip</a> (contains the Linux x86-64 binary)</p>
-  <p><em>Hints:</em></p>
-  <ul>
-    <li>Disassemble it with <code>objdump -d ./crackme</code> or open it in Ghidra/IDA.</li>
-    <li>Find the function that compares your input against a stored byte array - that's the
-      "unlock code" check. Figure out the per-character transform being applied, then write it
-      in reverse to recover the correct unlock code.</li>
-    <li>The unlock code itself won't look like a flag, and that's intentional &mdash; it's a key,
-      not the answer. What happens when you actually type it in?</li>
-  </ul>
+  <p><em>Hint:</em> <code>CYBERGUARD_UNLOCK</code></p>
 </div>
 </body></html>

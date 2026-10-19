@@ -82,7 +82,7 @@
     "description": "A small Linux access-terminal binary asks for an \"unlock code\" and tells you if you're right — but running `strings` on it will not hand you anything useful.\n\nThe correct unlock code is transformed before comparison; you will need to read the disassembly to recover the transform, then invert it. The unlock code itself isn't the flag — typing it in correctly triggers one more step inside the program!\n\n### Reverse Engineering Guide:\n1. Download `crackme.zip` (contains the compiled x86_64 ELF binary).\n2. Disassemble with `objdump -d ./crackme` or open in Ghidra / IDA.\n3. Locate the `check_unlock_code` routine: each input character at index `i` is transformed via `((input[i] + i) % 256) ^ 0x5A` and compared against a fixed byte array.\n4. Invert the algorithm to recover the unlock string (`CYBERGUARD_UNLOCK`).\n5. Execute the binary with the recovered unlock code: `./crackme \"CYBERGUARD_UNLOCK\"` to decrypt and print the flag!",
     "points": 300,
     "flag": "ECCC{reverse_the_bytes}",
-    "hint": "1. Disassemble with `objdump -d ./crackme` or open it in Ghidra/IDA.\n2. Invert the transformation: unlock[i] = ((target[i] ^ 0x5A) - i) % 256. This yields the code \"CYBERGUARD_UNLOCK\".\n3. Run `./crackme CYBERGUARD_UNLOCK` to make the program decrypt and output the flag.",
+    "hint": "CYBERGUARD_UNLOCK",
     "instanceUrl": "/workshop/08-reverse-crackme/index.html",
     "isPerUserInstance": false,
     "isDraft": false

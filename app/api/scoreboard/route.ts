@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { resolveSolveScore } from '@/lib/scoring';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // 1. Fetch non-admin members with their solves & linked challenges
+    // 1. Fetch all solves to determine First Blood timestamps accurately
+    const allSolves = await prisma.solve.findMany({
+      where: { user: { role: 'MEMBER' } },
+      select: { id: true, challengeId: true, solvedAt: true },
+      orderBy: { solvedAt: 'asc' },
+    });
+
+    const firstSolveMap = new Map<string, string>();
+    for (const s of allSolves) {
+      if (!firstSolveMap.has(s.challengeId)) {
+        firstSolveMap.set(s.challengeId, s.solvedAt.toISOString());
+      }
+    }
+
+    // 2. Fetch non-admin members with their solves & linked challenges
     const members = await prisma.user.findMany({
       where: { role: 'MEMBER' },
       select: {
@@ -14,7 +29,14 @@ export async function GET() {
         createdAt: true,
         solves: {
           select: {
+            id: true,
             solvedAt: true,
+            points: true,
+            basePoints: true,
+            speedBonus: true,
+            firstBloodBonus: true,
+            timeTakenSeconds: true,
+            isFirstBlood: true,
             challenge: {
               select: {
                 id: true,
@@ -28,12 +50,30 @@ export async function GET() {
       },
     });
 
-    // 2. Compute total points, solve count, and latest solve timestamp per member
+    // 3. Compute total points, score breakdown, solve count, and latest solve timestamp per member
     const leaderboardData = members.map((member) => {
       // Exclude solves on draft challenges
       const validSolves = member.solves.filter((s) => !s.challenge.isDraft);
-      
-      const totalPoints = validSolves.reduce((sum, s) => sum + s.challenge.points, 0);
+
+      let totalPoints = 0;
+      let totalBasePoints = 0;
+      let totalSpeedBonus = 0;
+      let totalFirstBloodBonus = 0;
+      let firstBloodCount = 0;
+
+      for (const s of validSolves) {
+        const isFb = s.isFirstBlood || firstSolveMap.get(s.challenge.id) === s.solvedAt.toISOString();
+        const score = resolveSolveScore({ ...s, isFirstBlood: isFb });
+
+        totalPoints += score.totalPoints;
+        totalBasePoints += score.basePoints;
+        totalSpeedBonus += score.speedBonus;
+        totalFirstBloodBonus += score.firstBloodBonus;
+        if (score.isFirstBlood) {
+          firstBloodCount++;
+        }
+      }
+
       const solvedCount = validSolves.length;
 
       // Latest solve timestamp (fallback to user creation date if 0 solves)
@@ -50,11 +90,15 @@ export async function GET() {
         username: member.username,
         solvedCount,
         totalPoints,
+        basePoints: totalBasePoints,
+        speedBonus: totalSpeedBonus,
+        firstBloodBonus: totalFirstBloodBonus,
+        firstBloodCount,
         lastSolveTime: lastSolveTime.toISOString(),
       };
     });
 
-    // 3. Sort leaderboard:
+    // 4. Sort leaderboard:
     // Primary: Total Points (DESC)
     // Secondary: Last Solve Time (ASC) -> reached score earlier
     leaderboardData.sort((a, b) => {
@@ -70,7 +114,7 @@ export async function GET() {
       ...item,
     }));
 
-    // 4. Fetch recent global solves for live solve feed ticker
+    // 5. Fetch recent global solves for live solve feed ticker
     const recentSolves = await prisma.solve.findMany({
       where: {
         user: { role: 'MEMBER' },
@@ -81,6 +125,12 @@ export async function GET() {
       select: {
         id: true,
         solvedAt: true,
+        points: true,
+        basePoints: true,
+        speedBonus: true,
+        firstBloodBonus: true,
+        timeTakenSeconds: true,
+        isFirstBlood: true,
         user: {
           select: { username: true },
         },
@@ -90,31 +140,20 @@ export async function GET() {
       },
     });
 
-    // Compute if each recent solve was First Blood
-    // A solve is First Blood if no earlier non-admin solve exists for that challenge
-    const allSolves = await prisma.solve.findMany({
-      where: { user: { role: 'MEMBER' } },
-      select: { challengeId: true, solvedAt: true },
-      orderBy: { solvedAt: 'asc' },
-    });
-
-    const firstSolveMap = new Map<string, string>();
-    for (const s of allSolves) {
-      if (!firstSolveMap.has(s.challengeId)) {
-        firstSolveMap.set(s.challengeId, s.solvedAt.toISOString());
-      }
-    }
-
     const formattedFeed = recentSolves.map((s) => {
-      const earliestSolve = firstSolveMap.get(s.challenge.id);
-      const isFirstBlood = earliestSolve === s.solvedAt.toISOString();
+      const isFirstBlood = s.isFirstBlood || firstSolveMap.get(s.challenge.id) === s.solvedAt.toISOString();
+      const score = resolveSolveScore({ ...s, isFirstBlood });
 
       return {
         id: s.id,
         username: s.user.username,
         challengeTitle: s.challenge.title,
         category: s.challenge.category,
-        points: s.challenge.points,
+        points: score.totalPoints,
+        basePoints: score.basePoints,
+        speedBonus: score.speedBonus,
+        firstBloodBonus: score.firstBloodBonus,
+        timeTakenSeconds: score.timeTakenSeconds,
         solvedAt: s.solvedAt.toISOString(),
         isFirstBlood,
       };

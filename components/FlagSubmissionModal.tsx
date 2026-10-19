@@ -28,6 +28,8 @@ import {
   Play,
   Lock,
   Unlock,
+  Zap,
+  Trophy,
 } from 'lucide-react';
 import { ChallengeFile } from '@/lib/challenge-files';
 
@@ -68,6 +70,14 @@ export default function FlagSubmissionModal({
   const [firstBloodTriggered, setFirstBloodTriggered] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [scoringResult, setScoringResult] = useState<{
+    basePoints: number;
+    speedBonus: number;
+    firstBloodBonus: number;
+    totalPoints: number;
+    timeTakenSeconds: number;
+    isFirstBlood: boolean;
+  } | null>(null);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const isTimerActiveRef = React.useRef(false);
 
@@ -173,7 +183,11 @@ export default function FlagSubmissionModal({
       const res = await fetch('/api/submit-flag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challengeId: challenge.id, flag: flag.trim() }),
+        body: JSON.stringify({
+          challengeId: challenge.id,
+          flag: flag.trim(),
+          elapsedSeconds,
+        }),
       });
 
       const data = await res.json();
@@ -185,25 +199,28 @@ export default function FlagSubmissionModal({
 
       if (data.status === 'correct' || data.status === 'admin_test') {
         setStatusMsg({ type: 'success', text: data.message });
+        if (data.scoring) {
+          setScoringResult(data.scoring);
+        }
         setIsTimerActive(false); // Stop the timer on success
         isTimerActiveRef.current = false;
 
         confetti({
-          particleCount: 90,
-          spread: 80,
+          particleCount: 110,
+          spread: 90,
           origin: { y: 0.6 },
-          colors: ['#3b82f6', '#10b981', '#38bdf8', '#ffffff'],
+          colors: ['#3b82f6', '#10b981', '#38bdf8', '#f59e0b', '#ffffff'],
         });
 
         if (data.isFirstBlood) {
           setFirstBloodTriggered(true);
         }
 
-        onSolveSuccess(challenge.id, challenge.points, !!data.isFirstBlood);
+        onSolveSuccess(challenge.id, data.points || challenge.points, !!data.isFirstBlood);
 
         setTimeout(() => {
           onClose();
-        }, 1800);
+        }, 3200);
       } else {
         setStatusMsg({ type: 'error', text: data.message || 'INVALID FLAG. Check your payload and try again.' });
       }
@@ -323,6 +340,15 @@ export default function FlagSubmissionModal({
               />
               <span>{isStarted ? formatTimer(elapsedSeconds) : '00:00 (STANDBY)'}</span>
             </div>
+
+            {isStarted && !challenge.isSolved && (
+              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-950/50 border border-blue-800/60 text-[10px] font-mono-code text-blue-300">
+                <Zap className="w-3 h-3 text-blue-400" />
+                <span>
+                  SPEED: +{Math.round(challenge.points * 0.25 * (elapsedSeconds <= 300 ? 1 : elapsedSeconds >= 3600 ? 0 : (3600 - elapsedSeconds) / 3300))} PTS
+                </span>
+              </div>
+            )}
 
             <button
               onClick={onClose}
@@ -613,7 +639,40 @@ export default function FlagSubmissionModal({
             </div>
           </div>
 
-          {statusMsg && (
+          {/* Explicit Score Breakdown Card upon solve */}
+          {scoringResult && (
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-950/80 via-[#0a142e] to-indigo-950/80 border border-blue-700/60 shadow-lg space-y-2">
+              <div className="flex items-center justify-between text-xs font-mono-code">
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  POINTS AWARDED BREAKDOWN
+                </span>
+                <span className="font-bold text-amber-400 text-sm">
+                  +{scoringResult.totalPoints} PTS TOTAL
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center font-mono-code text-xs">
+                <div className="p-2 rounded-lg bg-[#040711]/90 border border-[#172447]">
+                  <span className="text-[10px] text-slate-400 block">BASE WORTH</span>
+                  <span className="text-white font-bold">+{scoringResult.basePoints}</span>
+                </div>
+                <div className="p-2 rounded-lg bg-[#040711]/90 border border-blue-900/50">
+                  <span className="text-[10px] text-blue-400 block flex items-center justify-center gap-0.5">
+                    <Zap className="w-2.5 h-2.5" /> SPEED ({formatTimer(scoringResult.timeTakenSeconds)})
+                  </span>
+                  <span className="text-blue-300 font-bold">+{scoringResult.speedBonus}</span>
+                </div>
+                <div className="p-2 rounded-lg bg-[#040711]/90 border border-rose-900/50">
+                  <span className="text-[10px] text-rose-400 block flex items-center justify-center gap-0.5">
+                    <Flame className="w-2.5 h-2.5" /> 1ST BLOOD
+                  </span>
+                  <span className="text-rose-300 font-bold">+{scoringResult.firstBloodBonus}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {statusMsg && !scoringResult && (
             <div
               className={`p-3 rounded-xl border text-xs font-mono-code flex items-center gap-2 ${
                 statusMsg.type === 'success'

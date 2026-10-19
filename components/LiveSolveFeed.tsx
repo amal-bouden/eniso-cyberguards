@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, Zap } from 'lucide-react';
 
 export interface FeedItem {
   id: string;
@@ -9,6 +9,10 @@ export interface FeedItem {
   challengeTitle: string;
   category: string;
   points: number;
+  basePoints?: number;
+  speedBonus?: number;
+  firstBloodBonus?: number;
+  timeTakenSeconds?: number;
   solvedAt: string;
   isFirstBlood: boolean;
 }
@@ -81,6 +85,23 @@ export default function LiveSolveFeed({ feed: externalFeed, initialFeed }: LiveS
                 </span>
                 <span className="text-emerald-400 font-bold shrink-0 ml-2">+{item.points} PTS</span>
               </div>
+
+              {/* Explicit Points Breakdown in solve feed */}
+              {(item.speedBonus || item.firstBloodBonus) ? (
+                <div className="mt-1.5 pt-1.5 border-t border-[#1e293b]/70 flex items-center gap-2 text-[10px] text-slate-400">
+                  <span>Base: {item.basePoints ?? (item.points - (item.speedBonus ?? 0) - (item.firstBloodBonus ?? 0))}</span>
+                  {item.speedBonus ? (
+                    <span className="text-blue-400 flex items-center gap-0.5">
+                      <Zap className="w-2.5 h-2.5" /> +{item.speedBonus} speed
+                    </span>
+                  ) : null}
+                  {item.firstBloodBonus ? (
+                    <span className="text-rose-400 flex items-center gap-0.5">
+                      <Flame className="w-2.5 h-2.5" /> +{item.firstBloodBonus} FB
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           ))
         )}

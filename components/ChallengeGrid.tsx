@@ -162,9 +162,16 @@ export default function ChallengeGrid({
                       <span>{ch.title}</span>
                       <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400" />
                     </h3>
-                    <span className="text-xs font-mono-code text-slate-200 font-bold px-2 py-0.5 rounded bg-[#0b0f19] border border-[#1e293b]">
-                      {ch.points} PTS
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-xs font-mono-code text-slate-200 font-bold px-2 py-0.5 rounded bg-[#0b0f19] border border-[#1e293b]">
+                        {ch.points} PTS
+                      </span>
+                      {!ch.isSolved && (
+                        <span className="hidden sm:inline-block text-[9px] font-mono-code font-bold text-amber-400/90 px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-800/40">
+                          +45% MAX
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <p className="text-xs text-slate-400 line-clamp-2 font-sans leading-relaxed">
                     {ch.description}

@@ -29,7 +29,7 @@ export const WORKSHOP_CHALLENGES = [
       'A warmup challenge to make sure your reconnaissance habits are dialed in.\n\n' +
       "Every good hacker's first reflex: always check what the server actually transmitted to you, not just what renders on the screen. Developers frequently leave developer comments, staging endpoints, and sensitive configuration instructions behind.\n\n" +
       '### Objectives & Recon Steps:\n' +
-      '1. Download or inspect the challenge HTML source (`index.html`).\n' +
+      '1. Open and inspect the challenge HTML source (`index.html`).\n' +
       '2. Press `Ctrl+U` (or View Page Source) to uncover hidden developer comments.\n' +
       '3. Locate and inspect the standard `robots.txt` crawler directive file.\n' +
       '4. Access the unlinked internal notice page to capture the flag.',
@@ -52,7 +52,7 @@ export const WORKSHOP_CHALLENGES = [
       '### Two-Stage Exploitation Path:\n' +
       "1. **Authentication Bypass (SQLi)**: Inject into the login form's unsanitized SQL query (e.g. `admin' -- `) to bypass authentication as `admin` without needing the admin password.\n" +
       '2. **UNION-Based Data Extraction**: Once authenticated, inspect the internal notes search feature. It queries the database with the same vulnerability. The real flag lives in a separate `secrets` table. Construct a `UNION SELECT` query matching column schemas to extract rows from `secrets`!\n\n' +
-      'Download `login.html` or the Flask backend `app.py` to inspect the code, or click "Launch Target" to attack the live web portal!',
+      'Click "Launch Target" to attack the live web portal!',
     points: 150,
     flag: 'ECCC{sql_injection_master}',
     hint:

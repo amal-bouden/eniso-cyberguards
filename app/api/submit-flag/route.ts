@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { checkSameOrigin, getSessionUser } from '@/lib/auth';
 import { hashFlag } from '@/lib/crypto';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { calculateScore, formatSolveDuration } from '@/lib/scoring';
 
 export async function POST(req: NextRequest) {
   if (!checkSameOrigin(req)) {
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { challengeId, flag } = body;
+    const { challengeId, flag, elapsedSeconds, startTime } = body;
 
     if (!challengeId || !flag) {
       return NextResponse.json({ error: 'Challenge ID and Flag are required.' }, { status: 400 });
@@ -68,12 +69,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Determine solve duration in seconds
+    let durationSeconds = 300; // default 5m if untracked
+    if (typeof elapsedSeconds === 'number' && elapsedSeconds >= 0) {
+      durationSeconds = elapsedSeconds;
+    } else if (typeof startTime === 'number' && startTime > 0) {
+      durationSeconds = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+    }
+
     // Admin test submission check
     if (user.role === 'ADMIN') {
+      const adminScore = calculateScore(challenge.points, durationSeconds, false);
       return NextResponse.json({
         status: 'admin_test',
         message: 'FLAG VERIFIED (ADMIN TEST): Test submission successful. 0 points awarded.',
         points: 0,
+        scoring: adminScore,
         isFirstBlood: false,
       });
     }
@@ -81,10 +92,20 @@ export async function POST(req: NextRequest) {
     // Member submission: Check if already solved
     const existingSolve = challenge.solves.find((s) => s.userId === user.userId);
     if (existingSolve) {
+      const existingPoints = existingSolve.points ?? challenge.points;
       return NextResponse.json({
         status: 'already_solved',
         message: 'ALREADY SOLVED: You have already captured this flag!',
-        points: challenge.points,
+        points: existingPoints,
+        scoring: {
+          basePoints: existingSolve.basePoints ?? challenge.points,
+          speedBonus: existingSolve.speedBonus ?? 0,
+          firstBloodBonus: existingSolve.firstBloodBonus ?? 0,
+          totalPoints: existingPoints,
+          timeTakenSeconds: existingSolve.timeTakenSeconds ?? 0,
+          isFirstBlood: existingSolve.isFirstBlood ?? false,
+          decayPercent: 0,
+        },
       });
     }
 
@@ -92,20 +113,33 @@ export async function POST(req: NextRequest) {
     const validSolves = challenge.solves.filter((s) => s.user.role !== 'ADMIN');
     const isFirstBlood = validSolves.length === 0;
 
-    // Create solve entry
+    // Calculate dynamic score with timing decay & first blood
+    const scoreCalc = calculateScore(challenge.points, durationSeconds, isFirstBlood);
+
+    // Create solve entry with scoring breakdown
     await prisma.solve.create({
       data: {
         userId: user.userId,
         challengeId: challenge.id,
+        points: scoreCalc.totalPoints,
+        basePoints: scoreCalc.basePoints,
+        speedBonus: scoreCalc.speedBonus,
+        firstBloodBonus: scoreCalc.firstBloodBonus,
+        timeTakenSeconds: scoreCalc.timeTakenSeconds,
+        isFirstBlood,
       },
     });
 
+    const timeFormatted = formatSolveDuration(durationSeconds);
+    const successMsg = isFirstBlood
+      ? `FIRST BLOOD! 🔥 +${scoreCalc.totalPoints} PTS (Base: ${scoreCalc.basePoints}, Speed [${timeFormatted}]: +${scoreCalc.speedBonus}, First Blood: +${scoreCalc.firstBloodBonus})`
+      : `FLAG ACCEPTED! 🎉 +${scoreCalc.totalPoints} PTS (Base: ${scoreCalc.basePoints}, Speed [${timeFormatted}]: +${scoreCalc.speedBonus})`;
+
     return NextResponse.json({
       status: 'correct',
-      message: isFirstBlood
-        ? 'FIRST BLOOD! 🔥 Flag Accepted! Outstanding performance, Operative.'
-        : 'SUCCESS! 🎉 Flag Accepted! Points added to team score.',
-      points: challenge.points,
+      message: successMsg,
+      points: scoreCalc.totalPoints,
+      scoring: scoreCalc,
       isFirstBlood,
       challengeTitle: challenge.title,
     });

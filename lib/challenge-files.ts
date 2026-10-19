@@ -28,29 +28,7 @@ Rules of the CTF:
 • Have fun and ask a mentor if you're stuck for more than 15 minutes.
 
 Good luck. The flag format is always ECCC{...}.`,
-    files: [
-      {
-        name: 'index.html',
-        path: '/workshop/01-warmup/index.html',
-        size: '1.8 KB',
-        type: 'text/html',
-        description: 'Challenge Page — open this and start poking around',
-      },
-      {
-        name: 'robots.txt',
-        path: '/workshop/01-warmup/robots.txt',
-        size: '44 B',
-        type: 'text/plain',
-        description: 'Crawler directives file',
-      },
-      {
-        name: 'secret-notice.html',
-        path: '/workshop/01-warmup/secret-notice.html',
-        size: '531 B',
-        type: 'text/html',
-        description: 'An unlinked internal page',
-      },
-    ],
+    files: [],
   },
 
   'Broken Auth': {
@@ -60,30 +38,8 @@ Good luck. The flag format is always ECCC{...}.`,
 
 Your objective: get into the admin account without knowing the admin password. Getting in is only step one — the flag is not on the welcome screen. Once inside, there's an internal notes search interface waiting for you.
 
-Download the source files to inspect the code, or click "Launch Target" to attack the live login portal directly.`,
-    files: [
-      {
-        name: 'login.html',
-        path: '/workshop/02-web-sqli/login.html',
-        size: '1.3 KB',
-        type: 'text/html',
-        description: 'Intranet Login Form',
-      },
-      {
-        name: 'app.py',
-        path: '/workshop/02-web-sqli/app.py',
-        size: '7.6 KB',
-        type: 'text/x-python',
-        description: 'Flask backend source code',
-      },
-      {
-        name: 'Dockerfile',
-        path: '/workshop/02-web-sqli/Dockerfile',
-        size: '124 B',
-        type: 'text/plain',
-        description: 'Docker container spec',
-      },
-    ],
+Click "Launch Target" to attack the live login portal directly.`,
+    files: [],
   },
 
   "Vigenère's Ghost": {
@@ -103,13 +59,6 @@ There's a second file in the same archive, encrypted the same way. Whatever you 
         size: '329 B',
         type: 'text/plain',
         description: 'Primary intercepted encrypted letter',
-      },
-      {
-        name: 'archive_footer.txt',
-        path: '/workshop/03-crypto-vigenere/archive_footer.txt',
-        size: '186 B',
-        type: 'text/plain',
-        description: 'Secondary encrypted archival record',
       },
     ],
   },
@@ -228,13 +177,6 @@ Hints:
         type: 'application/zip',
         description: 'Contains the Linux x86-64 binary',
       },
-      {
-        name: 'crackme',
-        path: '/workshop/08-reverse-crackme/crackme',
-        size: '16.1 KB',
-        type: 'application/x-executable',
-        description: 'Compiled Linux ELF binary (direct download)',
-      },
     ],
   },
 
@@ -260,20 +202,6 @@ Hints:
         size: '4.5 KB',
         type: 'application/zip',
         description: 'Vulnerable binary + C source code',
-      },
-      {
-        name: 'vuln.c',
-        path: '/workshop/09-pwn-stackoverflow/vuln.c',
-        size: '1.2 KB',
-        type: 'text/x-c',
-        description: 'C source code for structure inspection',
-      },
-      {
-        name: 'vuln',
-        path: '/workshop/09-pwn-stackoverflow/vuln',
-        size: '16.2 KB',
-        type: 'application/x-executable',
-        description: 'Linux x86-64 ELF target binary',
       },
     ],
   },

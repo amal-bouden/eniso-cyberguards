@@ -179,10 +179,7 @@ export const WORKSHOP_CHALLENGES = [
       '5. Execute the binary with the recovered unlock code: `./crackme "CYBERGUARD_UNLOCK"` to decrypt and print the flag!',
     points: 300,
     flag: 'ECCC{reverse_the_bytes}',
-    hint:
-      '1. Disassemble with `objdump -d ./crackme` or open it in Ghidra/IDA.\n' +
-      '2. Invert the transformation: unlock[i] = ((target[i] ^ 0x5A) - i) % 256. This yields the code "CYBERGUARD_UNLOCK".\n' +
-      '3. Run `./crackme CYBERGUARD_UNLOCK` to make the program decrypt and output the flag.',
+    hint: 'CYBERGUARD_UNLOCK',
     instanceUrl: '/workshop/08-reverse-crackme/index.html' as string | null,
     isPerUserInstance: false,
     isDraft: false,

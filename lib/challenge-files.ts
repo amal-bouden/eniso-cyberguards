@@ -60,6 +60,13 @@ There's a second file in the same archive, encrypted the same way. Whatever you 
         type: 'text/plain',
         description: 'Primary intercepted encrypted letter',
       },
+      {
+        name: 'archive_footer.txt',
+        path: '/workshop/03-crypto-vigenere/archive_footer.txt',
+        size: '290 B',
+        type: 'text/plain',
+        description: 'Second encrypted archive file',
+      },
     ],
   },
 
@@ -165,10 +172,8 @@ Hints:
     targetUrl: null,
     fullDescription: `A small Linux access-terminal binary was found on a retired lab machine. It asks for an "unlock code" and tells you if you got it right — but running strings on it won't hand you anything useful, even if you skip straight to the end.
 
-Hints:
-• Disassemble it with objdump -d ./crackme or open it in Ghidra/IDA.
-• Find the function that compares your input against a stored byte array — that's the "unlock code" check. Figure out the per-character transform being applied, then write it in reverse to recover the correct unlock code.
-• The unlock code itself won't look like a flag, and that's intentional — it's a key, not the answer. What happens when you actually type it in?`,
+Hint: CYBERGUARD_UNLOCK`,
+
     files: [
       {
         name: 'crackme.zip',

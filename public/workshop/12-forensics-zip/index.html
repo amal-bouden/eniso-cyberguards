@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Locked Vault | CyberGuards CTF</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 1.5rem;
+    }
+    .badge span { color: #f0883e; font-weight: bold; }
+    .section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 { color: #79c0ff; font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    p { line-height: 1.7; margin-bottom: 0.8rem; }
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #79c0ff;
+      overflow-x: auto;
+      margin: 0.8rem 0;
+      white-space: pre-wrap;
+    }
+    .file-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 0.6rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .file-icon { font-size: 1.8rem; }
+    .file-info { flex: 1; }
+    .file-info strong { color: #c9d1d9; display: block; margin-bottom: 0.2rem; }
+    .file-info span { color: #8b949e; font-size: 0.82rem; }
+    .file-content {
+      background: #1c2128;
+      border: 1px solid #3d444d;
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      margin-top: 0.5rem;
+    }
+    .hint-box {
+      background: #1c2128;
+      border: 1px solid #3d444d;
+      border-left: 4px solid #f0883e;
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+    .hint-box strong { color: #f0883e; }
+    details { margin: 0.5rem 0; }
+    details summary {
+      cursor: pointer;
+      color: #8b949e;
+      font-size: 0.88rem;
+      padding: 0.4rem 0;
+      user-select: none;
+    }
+    details summary:hover { color: #c9d1d9; }
+    details[open] summary { color: #c9d1d9; }
+    .download-btn {
+      display: inline-block;
+      background: #238636;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .download-btn:hover { background: #2ea043; }
+    .flag-input-wrap { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .flag-input-wrap input {
+      flex: 1;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #c9d1d9;
+      padding: 0.5rem 0.8rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .flag-input-wrap input:focus { outline: none; border-color: #58a6ff; }
+    .flag-input-wrap button {
+      background: #1f6feb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .flag-input-wrap button:hover { background: #388bfd; }
+    #flag-result { margin-top: 0.5rem; font-size: 0.88rem; }
+    .correct { color: #3fb950; }
+    .wrong { color: #f85149; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🗄️ The Locked Vault</h1>
+  <div class="badge">Category: <span>Misc / Password Cracking</span> &nbsp;|&nbsp; Difficulty: <span style="color:#f0883e">Medium</span> &nbsp;|&nbsp; Points: <span>250</span></div>
+
+  <div class="section">
+    <h2>📖 Description</h2>
+    <p>During a forensics investigation, you found a suspicious <strong>password-protected ZIP archive</strong> on a suspect's laptop. The archive is named <code>vault.zip</code> and contains a file called <code>flag.txt</code>.</p>
+    <p>Alongside the archive, you also recovered <strong>two text files</strong> from the same directory. They seem to be leftover notes from the suspect. Piece together the password from the clues hidden in them.</p>
+    <p>The flag is <strong>base64-encoded</strong> inside <code>flag.txt</code> — decode it once you crack the archive.</p>
+  </div>
+
+  <div class="section">
+    <h2>📦 Evidence Files</h2>
+
+    <div class="file-card">
+      <div class="file-icon">📄</div>
+      <div class="file-info">
+        <strong>club_notes.txt</strong>
+        <span>Recovered from Desktop/misc/</span>
+        <div class="file-content">Hey,
+
+Just a reminder — we standardized our internal tool passwords this year.
+The format we agreed on is:
+
+  [CLUB_ABBREVIATION]@[YEAR]
+
+Club abbreviation is our two-letter initials (uppercase).
+Year is the current active year (the one on our membership cards).
+
+Don't write it down anywhere obvious. This note gets deleted after the meeting.
+
+— Admin Team</div>
+      </div>
+    </div>
+
+    <div class="file-card">
+      <div class="file-icon">📄</div>
+      <div class="file-info">
+        <strong>membership_card_scan.txt</strong>
+        <span>Recovered from Documents/</span>
+        <div class="file-content">===================================
+  ENISo CyberGuards Security Club
+  Member: Ahmed Hamdi
+  ID: CG-0042
+  Membership Year: 2024
+  Role: General Member
+===================================
+
+Tools access: internal portal, lab machines
+Renewal: auto-renew enabled</div>
+      </div>
+    </div>
+
+    <p style="margin-top:1rem;">Download the encrypted archive:</p>
+    <a class="download-btn" href="vault.zip" download>⬇ Download vault.zip</a>
+  </div>
+
+  <div class="section">
+    <h2>💡 Hints</h2>
+
+    <details>
+      <summary>💡 Hint 1 — How do I find the password? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 1:</strong> Read both text files carefully. <code>club_notes.txt</code> gives you the <em>format</em> of the password. <code>membership_card_scan.txt</code> gives you the <em>values</em> to fill in. The club abbreviation and membership year are both visible.
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 2 — What are the two-letter initials? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 2:</strong> "CyberGuards" — the membership card shows the club name. The two-letter abbreviation of <em>CyberGuards</em> is <strong>CG</strong>. The membership year shown on the card is <strong>2024</strong>. Put it together with the <code>@</code> separator from the format.
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 3 — How do I open a password-protected ZIP? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 3:</strong> On Linux/Mac: <code>unzip -P YOUR_PASSWORD vault.zip</code><br>
+        On Windows: right-click → Extract All → enter password when prompted.<br>
+        Or use Python:
+        <div class="code-block">import zipfile
+with zipfile.ZipFile("vault.zip") as z:
+    data = z.read("flag.txt", pwd=b"YOUR_PASSWORD")
+    print(data.decode())</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 4 — I got the file content but it's not the flag yet (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 4:</strong> The content of <code>flag.txt</code> is <strong>base64-encoded</strong>. Decode it:<br>
+        <div class="code-block">import base64
+print(base64.b64decode("PASTE_CONTENT_HERE").decode())</div>
+        Or online: use <a href="https://gchq.github.io/CyberChef/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true,false)" target="_blank" style="color:#58a6ff">CyberChef → From Base64</a>.
+      </div>
+    </details>
+  </div>
+
+  <div class="section">
+    <h2>🚩 Submit Flag</h2>
+    <div class="flag-input-wrap">
+      <input type="text" id="flag-field" placeholder="ECCC{...}" autocomplete="off" spellcheck="false"/>
+      <button onclick="checkFlag()">Submit</button>
+    </div>
+    <div id="flag-result"></div>
+  </div>
+</div>
+
+<script>
+  function checkFlag() {
+    const val = document.getElementById('flag-field').value.trim();
+    const res = document.getElementById('flag-result');
+    if (val === 'ECCC{z1p_p4ssw0rd_crack3d}') {
+      res.innerHTML = '<span class="correct">✅ Correct! Password cracked and flag extracted.</span>';
+    } else {
+      res.innerHTML = '<span class="wrong">❌ Incorrect flag. Keep trying!</span>';
+    }
+  }
+  document.getElementById('flag-field').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkFlag();
+  });
+</script>
+</body>
+</html>

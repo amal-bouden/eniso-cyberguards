@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Broken Encryption | CyberGuards CTF</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 1.5rem;
+    }
+    .badge span { color: #f0883e; font-weight: bold; }
+    .section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 { color: #79c0ff; font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    p { line-height: 1.7; margin-bottom: 0.8rem; color: #c9d1d9; }
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #79c0ff;
+      overflow-x: auto;
+      margin: 0.8rem 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .hint-box {
+      background: #1c2128;
+      border: 1px solid #3d444d;
+      border-left: 4px solid #f0883e;
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+    .hint-box strong { color: #f0883e; }
+    details { margin: 0.5rem 0; }
+    details summary {
+      cursor: pointer;
+      color: #8b949e;
+      font-size: 0.88rem;
+      padding: 0.4rem 0;
+      user-select: none;
+    }
+    details summary:hover { color: #c9d1d9; }
+    details[open] summary { color: #c9d1d9; }
+    .download-btn {
+      display: inline-block;
+      background: #238636;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .download-btn:hover { background: #2ea043; }
+    .flag-input-wrap { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .flag-input-wrap input {
+      flex: 1;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #c9d1d9;
+      padding: 0.5rem 0.8rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .flag-input-wrap input:focus { outline: none; border-color: #58a6ff; }
+    .flag-input-wrap button {
+      background: #1f6feb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .flag-input-wrap button:hover { background: #388bfd; }
+    #flag-result { margin-top: 0.5rem; font-size: 0.88rem; }
+    .correct { color: #3fb950; }
+    .wrong { color: #f85149; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🔐 Broken Encryption</h1>
+  <div class="badge">Category: <span>Crypto</span> &nbsp;|&nbsp; Difficulty: <span style="color:#f0883e">Medium</span> &nbsp;|&nbsp; Points: <span>250</span></div>
+
+  <div class="section">
+    <h2>📖 Description</h2>
+    <p>Our intelligence team intercepted an RSA-encrypted message from a suspicious network node. The operator was lazy — they used a <strong>very small public exponent</strong> and didn't bother with any padding. Big mistake.</p>
+    <p>We have the public key parameters and the ciphertext. Recover the plaintext and find the flag.</p>
+  </div>
+
+  <div class="section">
+    <h2>📦 Challenge Data</h2>
+    <p>Public key and ciphertext:</p>
+    <div class="code-block">n = 6703903964971298549787012499102923063739682910296196688861780721860882022282058200113667471029423602316131355334125870933005494200893502724353217013532393
+
+e = 3
+
+c = 61826850384659721577859736105244483165562021725302999700764313218009851150541821392479405118525206272868597541284474900721253391231896171048549</div>
+    <p>You can also download this as a text file:</p>
+    <a class="download-btn" href="challenge.txt" download>⬇ Download challenge.txt</a>
+  </div>
+
+  <div class="section">
+    <h2>💡 Hints</h2>
+
+    <details>
+      <summary>💡 Hint 1 — What's the weakness? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 1:</strong> The public exponent is <code>e = 3</code>. When the message <em>m</em> is small enough, <em>m³</em> may be <strong>less than n</strong> — which means the encryption is literally just <em>m³</em> with no modular reduction. No modular arithmetic needed at all to reverse it!
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 2 — What operation reverses this? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 2:</strong> If <em>c = m³</em> (no mod), then <em>m = ∛c</em> — the integer cube root of the ciphertext. Python's <code>gmpy2</code> library has <code>iroot(c, 3)</code>, or you can use <code>sympy.integer_nthroot(c, 3)</code>. An exact root means you've found the right value!
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 3 — How do I turn the number into text? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 3:</strong> Once you have the integer <em>m</em>, convert it to bytes:
+        <div class="code-block">m.to_bytes((m.bit_length() + 7) // 8, 'big').decode()</div>
+        The result should look like a flag starting with <code>ECCC{</code>.
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 4 — Full solver script (last resort!)</summary>
+      <div class="hint-box">
+        <strong>Hint 4:</strong>
+        <div class="code-block">from sympy import integer_nthroot
+
+c = 61826850384659721577859736105244483165562021725302999700764313218009851150541821392479405118525206272868597541284474900721253391231896171048549
+
+m, exact = integer_nthroot(c, 3)
+if exact:
+    flag = m.to_bytes((m.bit_length() + 7) // 8, 'big').decode()
+    print(flag)
+else:
+    print("Not an exact cube root — check your values")</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="section">
+    <h2>🚩 Submit Flag</h2>
+    <div class="flag-input-wrap">
+      <input type="text" id="flag-field" placeholder="ECCC{...}" autocomplete="off" spellcheck="false"/>
+      <button onclick="checkFlag()">Submit</button>
+    </div>
+    <div id="flag-result"></div>
+  </div>
+</div>
+
+<script>
+  function checkFlag() {
+    const val = document.getElementById('flag-field').value.trim();
+    const res = document.getElementById('flag-result');
+    if (val === 'ECCC{cube_root_wins}') {
+      res.innerHTML = '<span class="correct">✅ Correct! Well done — that\'s the small-exponent RSA attack.</span>';
+    } else {
+      res.innerHTML = '<span class="wrong">❌ Incorrect flag. Keep trying!</span>';
+    }
+  }
+  document.getElementById('flag-field').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkFlag();
+  });
+</script>
+</body>
+</html>

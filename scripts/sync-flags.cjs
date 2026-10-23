@@ -29,7 +29,10 @@ const CHALLENGES = [
   { title: "The Intern's Trail", flag: 'ECCC{nimbus_2022}' },
   { title: 'Whispers on the Wire', flag: 'ECCC{plaintext_protocols_leak}' },
   { title: 'Crack Me If You Can', flag: 'ECCC{reverse_the_bytes}' },
-  { title: 'Stack Warmup', flag: 'ECCC{mind_the_buffer}' }
+  { title: 'Stack Warmup', flag: 'ECCC{mind_the_buffer}' },
+  { title: 'Broken Encryption', flag: 'ECCC{cube_root_wins}' },
+  { title: 'The Secure Portal', flag: 'ECCC{alg_n0ne_byp4ss}' },
+  { title: 'The Locked Vault', flag: 'ECCC{z1p_p4ssw0rd_crack3d}' }
 ];
 
 async function main() {
@@ -42,7 +45,7 @@ async function main() {
     });
     console.log(`✅ Updated flag hash & published: "${ch.title}"`);
   }
-  console.log('\n🎉 All 9 challenge flag hashes synchronized with lib/crypto.ts algorithm!');
+  console.log('\n🎉 All 12 challenge flag hashes synchronized with lib/crypto.ts algorithm!');
 }
 
 main().catch(console.error).finally(() => db.close());

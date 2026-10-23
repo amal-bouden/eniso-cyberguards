@@ -12,22 +12,26 @@
 <body>
 <h1>Stack Warmup</h1>
 <div class="box">
-  <p>A practice terminal is running on the lab network. It logs your name... into a buffer that's smaller
-  than what it actually reads. There's a function called <code>win()</code> in the binary that nobody ever
-  calls. Or is it never called?</p>
-  <p>Connect with:</p>
-  <pre>nc &lt;host&gt; 9002</pre>
-  <p>Download the exact binary running on the server (same file, so addresses will match):</p>
-  <p><a href="vuln.zip">vuln.zip</a> (contains binary + source)</p>
+  <p>A practice terminal logs your name... into a buffer that's smaller than what it actually reads. There's a function called <code>win()</code> in the binary that nobody ever calls during normal execution.</p>
+  
+  <p><strong>Download challenge package (includes binary, source, Dockerfile, and instructions):</strong></p>
+  <p><a href="vuln.zip">vuln.zip</a></p>
+
+  <p><strong>Run on your own machine with Docker:</strong></p>
+  <p>Extract <code>vuln.zip</code> and run inside the folder:</p>
+  <pre>docker compose up -d
+# or: docker build -t stack-warmup . && docker run -d -p 9002:9002 stack-warmup</pre>
+
+  <p>Then connect locally:</p>
+  <pre>nc localhost 9002</pre>
+
   <p><em>Hints:</em></p>
   <ul>
     <li><code>objdump -d ./vuln</code> to find the address of <code>win</code>.</li>
-    <li>The vulnerable buffer is 64 bytes; find out how many bytes come before the saved return address
-      (hint: there's also a saved base pointer in between).</li>
+    <li>The vulnerable buffer is 64 bytes; find out how many bytes come before the saved return address (hint: there's also a saved base pointer in between).</li>
     <li>This binary has no stack canary and no PIE &mdash; on purpose, for your first overflow.</li>
     <li>pwntools' <code>p64()</code> is the easiest way to pack the address in the right byte order.</li>
-    <li>What <code>win()</code> prints once you redirect execution there isn't in flag format yet
-      &mdash; you'll recognize the pattern from elsewhere in this CTF.</li>
+    <li>What <code>win()</code> prints once you redirect execution there isn't in flag format yet &mdash; you'll recognize the pattern from elsewhere in this CTF.</li>
   </ul>
 </div>
 </body></html>

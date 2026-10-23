@@ -188,21 +188,24 @@ export const WORKSHOP_CHALLENGES = [
     title: 'Stack Warmup',
     category: 'Pwn',
     description:
-      'A practice terminal is listening on the network (connect with `nc <host> 9002`). It logs your name into a fixed-size buffer using a read that is larger than the buffer itself. There is a `win()` function in the binary that is never called during normal execution... or is it?\n\n' +
+      'A practice terminal is listening on port 9002. It logs your name into a fixed-size buffer using a read that is larger than the buffer itself. There is a `win()` function in the binary that is never called during normal execution... or is it?\n\n' +
       "This is a classic ret2win stack buffer overflow: no stack canary, no PIE, on purpose, so you can find `win()`'s address with objdump and overwrite the saved return address to jump there.\n\n" +
+      '### Quick Start with Docker:\n' +
+      '1. Download `vuln.zip` (contains binary, C source, Dockerfile, and docker-compose.yml).\n' +
+      '2. Run locally: `docker compose up -d` (or `docker build -t stack-warmup . && docker run -d -p 9002:9002 stack-warmup`).\n' +
+      '3. Connect locally: `nc localhost 9002`.\n\n' +
       '### Binary Exploitation Guide:\n' +
-      '1. Download `vuln.zip` containing the precompiled binary and C source code.\n' +
-      "2. Disassemble with `objdump -d ./vuln | grep '<win>:'` to find `win()`'s fixed address (e.g. `0x4019a5`).\n" +
-      '3. Calculate the buffer offset: 64-byte buffer + 8-byte saved RBP = 72 bytes before the return address.\n' +
-      '4. Construct a pwntools payload: `b\'A\' * 72 + p64(win_addr)`.\n' +
-      '5. Send to `nc <host> 9002` and base64-decode the returned flag!',
+      "1. Disassemble with `objdump -d ./vuln | grep '<win>:'` to find `win()`'s address (`0x4019a5`).\n" +
+      '2. Calculate the buffer offset: 64-byte buffer + 8-byte saved RBP = 72 bytes before the return address.\n' +
+      '3. Construct a pwntools payload: `b\'A\' * 72 + p64(win_addr)`.\n' +
+      '4. Send to `nc localhost 9002` and base64-decode the returned flag!',
     points: 400,
     flag: 'ECCC{mind_the_buffer}',
     hint:
       '1. The vulnerable buffer is 64 bytes, plus 8 bytes of saved base pointer (72 bytes total before return address).\n' +
       "2. Disassemble `./vuln` to find `win()`'s address. Use pwntools' `p64()` to pack the address.\n" +
       "3. What win() prints is base64 encoded. Decode it to reveal the flag.",
-    instanceUrl: 'nc <host> 9002' as string | null,
+    instanceUrl: '/workshop/09-pwn-stackoverflow/index.html' as string | null,
     isPerUserInstance: false,
     isDraft: false,
   },

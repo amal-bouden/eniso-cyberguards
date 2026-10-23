@@ -187,26 +187,32 @@ Hint: CYBERGUARD_UNLOCK`,
 
   'Stack Warmup': {
     category: 'Pwn',
-    targetUrl: 'nc <target-host> 9002',
-    fullDescription: `A practice terminal is running on the lab network. It logs your name... into a buffer that's smaller than what it actually reads. There's a function called win() in the binary that nobody ever calls. Or is it never called?
+    targetUrl: '/workshop/09-pwn-stackoverflow/index.html',
+    fullDescription: `A practice terminal is listening on port 9002. It logs your name into a fixed-size buffer using a read that is larger than the buffer itself. There is a function called win() in the binary that nobody ever calls during normal execution... or is it?
 
-Connect with: nc <host> 9002
+To make this challenge accessible anywhere without network/IP barriers, the challenge package includes a Dockerfile so you can spin it up directly on your own machine.
 
-Download the exact binary running on the server (same file, so addresses will match).
+Quick Start:
+1. Download vuln.zip and extract it.
+2. Run locally with Docker:
+   docker compose up -d
+   (or: docker build -t stack-warmup . && docker run -d -p 9002:9002 stack-warmup)
+3. Connect locally:
+   nc localhost 9002 (or 127.0.0.1 9002)
 
 Hints:
-• objdump -d ./vuln to find the address of win.
-• The vulnerable buffer is 64 bytes; find out how many bytes come before the saved return address (hint: there's also a saved base pointer in between).
+• objdump -d ./vuln to find the address of win().
+• The vulnerable buffer is 64 bytes; calculate how many bytes come before the saved return address (remember the saved base pointer).
 • This binary has no stack canary and no PIE — on purpose, for your first overflow.
 • pwntools' p64() is the easiest way to pack the address in the right byte order.
-• What win() prints once you redirect execution there isn't in flag format yet — you'll recognize the pattern from elsewhere in this CTF.`,
+• What win() prints once you redirect execution there isn't in flag format yet — decode it to reveal the flag.`,
     files: [
       {
         name: 'vuln.zip',
         path: '/workshop/09-pwn-stackoverflow/vuln.zip',
-        size: '4.5 KB',
+        size: '354 KB',
         type: 'application/zip',
-        description: 'Vulnerable binary + C source code',
+        description: 'Vulnerable binary + C source + Dockerfile + docker-compose.yml',
       },
     ],
   },

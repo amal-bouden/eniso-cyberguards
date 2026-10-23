@@ -101,10 +101,10 @@
   {
     "title": "Broken Encryption",
     "category": "Crypto",
-    "description": "Our intelligence team intercepted an RSA-encrypted message from a suspicious network node. The operator was lazy — they used a **very small public exponent** and didn't bother with any padding. Big mistake.\n\nWe have the public key parameters and the ciphertext. Recover the plaintext and find the flag.\n\n### Challenge Parameters:\n```\nn = 6703903964971298549787012499102923063739682910296196688861780721860882022282058200113667471029423602316131355334125870933005494200893502724353217013532393\n\ne = 3\n\nc = 61826850384659721577859736105244483165562021725302999700764313218009851150541821392479405118525206272868597541284474900721253391231896171048549\n```\n\n### Objectives & Decryption Steps:\n1. Download `challenge.txt` with the key parameters.\n2. Notice that `e = 3` — a dangerously small exponent.\n3. Check: if the message `m` is short enough, `m³ < n`, meaning no modular reduction occurs during encryption.\n4. Compute the integer cube root of `c` using Python's `sympy.integer_nthroot(c, 3)`.\n5. Convert the resulting integer to bytes to reveal the flag.",
+    "description": "Our intelligence team intercepted an RSA-encrypted message from a suspicious network node. Something about the public key parameters looks very wrong — the kind of mistake that makes a cryptographer cringe.\n\nDownload `challenge.txt`, study the key parameters carefully, and recover the hidden flag.",
     "points": 250,
     "flag": "ECCC{cube_root_wins}",
-    "hint": "1. The public exponent e = 3 is very small. When m³ < n, the encryption is literally just m³ with no modular reduction — reversible with a simple integer cube root.\n2. Use Python: `from sympy import integer_nthroot; m, exact = integer_nthroot(c, 3)` then `m.to_bytes((m.bit_length() + 7) // 8, 'big').decode()`.",
+    "hint": "Look closely at the value of `e`. Is there a relationship between `e`, the message, and the ciphertext that doesn't require factoring `n`? Think about what modular exponentiation actually does when the result fits entirely within the modulus.",
     "instanceUrl": "/workshop/10-crypto-rsa/index.html",
     "isPerUserInstance": false,
     "isDraft": false
@@ -112,10 +112,10 @@
   {
     "title": "The Secure Portal",
     "category": "Web",
-    "description": "A developer built an internal admin portal that uses **JSON Web Tokens (JWTs)** for access control. They thought that as long as there's a token, it must be valid — but they made a critical mistake in how they verify it.\n\nYou've been given a **guest token**. Your goal is to forge an **admin token** and get the portal to accept it.\n\nThe portal runs entirely in your browser — no server needed.\n\n### JWT Exploitation Steps:\n1. Open the challenge page — it auto-issues a guest JWT with `\"role\": \"user\"`.\n2. Click \"Decode Token\" to inspect the header and payload structure.\n3. Notice the header contains `\"alg\": \"HS256\"` — but the verifier trusts whatever `alg` the token claims.\n4. Craft a new JWT with `\"alg\": \"none\"` and `\"role\": \"admin\"` — with an empty signature (trailing dot, no value).\n5. Paste the forged token and click \"Authenticate\" to claim the flag!",
+    "description": "A developer built an internal admin portal protected by JSON Web Tokens (JWTs). You've been issued a **guest token** — but the admin area is off limits. Or is it?\n\nOpen the challenge page, inspect your token carefully, and find a way to convince the portal that you're an admin.",
     "points": 250,
     "flag": "ECCC{alg_n0ne_byp4ss}",
-    "hint": "1. JWT headers contain an `alg` field. Some buggy implementations accept `alg: none`, skipping signature verification entirely.\n2. Craft a JWT in your browser console: `btoa(JSON.stringify({alg:'none',typ:'JWT'})).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')` + '.' + (encoded payload with role:admin) + '.' (empty signature).",
+    "hint": "A JWT has three parts: header, payload, and signature. The header tells the server *how* to verify the token. What happens if the server blindly trusts whatever the token's header says about the algorithm?",
     "instanceUrl": "/workshop/11-web-jwt/index.html",
     "isPerUserInstance": false,
     "isDraft": false
@@ -123,10 +123,10 @@
   {
     "title": "The Locked Vault",
     "category": "Misc",
-    "description": "During a forensics investigation, you found a suspicious **password-protected ZIP archive** on a suspect's laptop. The archive is named `vault.zip` and contains a file called `flag.txt`.\n\nAlongside the archive, you also recovered **two text files** from the same directory. They seem to be leftover notes from the suspect. Piece together the password from the clues hidden in them.\n\nThe flag is **base64-encoded** inside `flag.txt` — decode it once you crack the archive.\n\n### Evidence Files (on challenge page):\n- `club_notes.txt`: Password format is `[CLUB_ABBREVIATION]@[YEAR]`\n- `membership_card_scan.txt`: Club = CyberGuards (→ CG), Membership Year = 2024\n\n### Objectives & Cracking Steps:\n1. Read both embedded text files on the challenge page.\n2. Derive the password: two-letter club abbreviation + `@` + membership year.\n3. Extract `vault.zip` using the recovered password.\n4. Base64-decode the contents of `flag.txt` to reveal the flag.",
+    "description": "During a forensics investigation, you recovered a **password-protected ZIP archive** from a suspect's laptop alongside two seemingly unrelated text files left behind in the same folder.\n\nThe archive contains the flag — but it's locked. Everything you need to crack it is hidden in those two recovered documents. Read them carefully.",
     "points": 250,
     "flag": "ECCC{z1p_p4ssw0rd_crack3d}",
-    "hint": "1. `club_notes.txt` gives you the password format: `[ABBREVIATION]@[YEAR]`. `membership_card_scan.txt` gives you the club name (CyberGuards → CG) and the year (2024).\n2. Extract with: `unzip -P CG@2024 vault.zip` on Linux/Mac, or use Python's `zipfile` module. The content of flag.txt is base64-encoded — decode it to get the flag.",
+    "hint": "Both text files together tell the full story — one describes the password *format*, the other gives you the *values* to fill in. Don't forget: the content of the file you extract isn't the flag yet.",
     "instanceUrl": "/workshop/12-forensics-zip/index.html",
     "isPerUserInstance": false,
     "isDraft": false

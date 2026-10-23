@@ -214,19 +214,13 @@ Hints:
   'Broken Encryption': {
     category: 'Crypto',
     targetUrl: '/workshop/10-crypto-rsa/index.html',
-    fullDescription: `Our intelligence team intercepted an RSA-encrypted message. The operator used a very small public exponent (e = 3) with no padding — a classic and fatal mistake.
+    fullDescription: `Our intelligence team intercepted an RSA-encrypted message from a suspicious network node. The public key parameters are attached — but something about the way this key was generated is deeply unusual.
 
-When the plaintext m is short enough that m³ < n, no modular reduction occurs during encryption, so the ciphertext is literally m³. Reversing this requires only an integer cube root — no factoring needed.
-
-Parameters provided in challenge.txt:
-• n = 6703903964971298549787012499102923063739682910296196688861780721860882022282058200113667471029423602316131355334125870933005494200893502724353217013532393
-• e = 3
-• c = 61826850384659721577859736105244483165562021725302999700764313218009851150541821392479405118525206272868597541284474900721253391231896171048549
+Download challenge.txt and examine the parameters. One value in particular stands out as a very suspicious choice for a production system.
 
 Hints:
-• Is m³ bigger or smaller than n? What does that mean for the modular reduction?
-• Python: from sympy import integer_nthroot; m, exact = integer_nthroot(c, 3)
-• Convert m to text: m.to_bytes((m.bit_length() + 7) // 8, 'big').decode()`,
+• RSA security fundamentally depends on certain assumptions about the relationship between the message, the exponent, and the modulus. If those assumptions are violated, the whole thing can unravel without ever needing to factor anything.
+• Once you have the plaintext as an integer, you'll need to convert it to text. Flag format is ECCC{...}.`,
     files: [
       {
         name: 'challenge.txt',
@@ -241,42 +235,28 @@ Hints:
   'The Secure Portal': {
     category: 'Web',
     targetUrl: '/workshop/11-web-jwt/index.html',
-    fullDescription: `A developer built an internal admin portal that uses JSON Web Tokens (JWTs) for access control. You've been given a guest token. Your goal: forge an admin token and get the portal to accept it.
+    fullDescription: `An internal admin portal uses JSON Web Tokens (JWTs) for access control. You've been issued a guest token — the admin area is restricted. Your objective: get in anyway.
 
-The portal runs entirely in your browser — no server needed.
-
-Exploitation steps:
-1. Open the challenge page — it auto-issues a guest JWT with "role": "user".
-2. Click "Decode Token" to inspect the header and payload structure.
-3. Notice the header: "alg": "HS256" — but the verifier trusts whatever alg the token itself claims.
-4. Craft a JWT with "alg": "none" and "role": "admin", with an empty signature (trailing dot, no value).
-5. Paste the forged token and click Authenticate.
+The portal runs entirely in your browser. Start by decoding your current token and studying its structure. Pay close attention to every field — especially the ones that tell the server how to handle the token.
 
 Hints:
-• JWT format: base64url(header) + '.' + base64url(payload) + '.' + signature
-• For alg:none, the signature part is empty — just leave it blank after the last dot.
-• Run this in browser console (F12): function b64url(o){return btoa(JSON.stringify(o)).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'')}`,
+• A JWT has three base64url-encoded sections separated by dots: header, payload, and signature. The header declares which algorithm was used to sign the token.
+• Open your browser's developer console (F12). You can encode and decode JWT parts manually — no external tools needed.
+• Think about what the server does if it can't verify a signature.`,
     files: [],
   },
 
   'The Locked Vault': {
     category: 'Misc',
     targetUrl: '/workshop/12-forensics-zip/index.html',
-    fullDescription: `During a forensics investigation, you found a password-protected ZIP archive on a suspect's laptop. The archive contains a file called flag.txt.
+    fullDescription: `During a forensics investigation, a password-protected ZIP archive was recovered from a suspect's laptop — along with two text files found in the same directory that the suspect clearly didn't mean to leave behind.
 
-Alongside the archive, you recovered two text files:
-• club_notes.txt — explains the password format: [CLUB_ABBREVIATION]@[YEAR]
-• membership_card_scan.txt — shows the club (CyberGuards) and membership year (2024)
-
-Steps:
-1. Read both files on the challenge page to deduce the password.
-2. Extract vault.zip: unzip -P <password> vault.zip (Linux/Mac), or use Python's zipfile module.
-3. The contents of flag.txt are base64-encoded — decode them to get the flag.
+The archive is named vault.zip and it contains the flag. Your job: figure out the password from the recovered documents and extract it.
 
 Hints:
-• The two-letter abbreviation of "CyberGuards" is CG.
-• Combine: abbreviation + @ + year.
-• Python: import zipfile, base64; z = zipfile.ZipFile("vault.zip"); print(base64.b64decode(z.read("flag.txt", pwd=b"PASSWORD")).decode())`,
+• Read both text files carefully before reaching for any cracking tools. The password isn't random — it follows a predictable pattern described in one of the documents.
+• On Linux/Mac: unzip -P <password> vault.zip. On Windows, right-click → Extract All and enter the password when prompted. Python's zipfile module works on any OS.
+• Whatever you extract from the archive isn't ready to submit yet — you'll recognise the next step from an earlier challenge.`,
     files: [
       {
         name: 'vault.zip',

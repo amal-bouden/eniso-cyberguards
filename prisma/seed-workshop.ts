@@ -206,6 +206,48 @@ export const WORKSHOP_CHALLENGES = [
     isPerUserInstance: false,
     isDraft: false,
   },
+  {
+    title: 'Broken Encryption',
+    category: 'Crypto',
+    description:
+      'Our intelligence team intercepted an RSA-encrypted message from a suspicious network node. Something about the public key parameters looks very wrong — the kind of mistake that makes a cryptographer cringe.\n\n' +
+      'Download `challenge.txt`, study the key parameters carefully, and recover the hidden flag.',
+    points: 250,
+    flag: 'ECCC{cube_root_wins}',
+    hint:
+      'Look closely at the value of `e`. Is there a relationship between `e`, the message, and the ciphertext that doesn\'t require factoring `n`? Think about what modular exponentiation actually does when the result fits entirely within the modulus.',
+    instanceUrl: '/workshop/10-crypto-rsa/index.html' as string | null,
+    isPerUserInstance: false,
+    isDraft: false,
+  },
+  {
+    title: 'The Secure Portal',
+    category: 'Web',
+    description:
+      'A developer built an internal admin portal protected by JSON Web Tokens (JWTs). You\'ve been issued a **guest token** — but the admin area is off limits. Or is it?\n\n' +
+      'Open the challenge page, inspect your token carefully, and find a way to convince the portal that you\'re an admin.',
+    points: 250,
+    flag: 'ECCC{alg_n0ne_byp4ss}',
+    hint:
+      'A JWT has three parts: header, payload, and signature. The header tells the server *how* to verify the token. What happens if the server blindly trusts whatever the token\'s header says about the algorithm?',
+    instanceUrl: '/workshop/11-web-jwt/index.html' as string | null,
+    isPerUserInstance: false,
+    isDraft: false,
+  },
+  {
+    title: 'The Locked Vault',
+    category: 'Misc',
+    description:
+      'During a forensics investigation, you recovered a **password-protected ZIP archive** from a suspect\'s laptop alongside two seemingly unrelated text files left behind in the same folder.\n\n' +
+      'The archive contains the flag — but it\'s locked. Everything you need to crack it is hidden in those two recovered documents. Read them carefully.',
+    points: 250,
+    flag: 'ECCC{z1p_p4ssw0rd_crack3d}',
+    hint:
+      'Both text files together tell the full story — one describes the password *format*, the other gives you the *values* to fill in. Don\'t forget: the content of the file you extract isn\'t the flag yet.',
+    instanceUrl: '/workshop/12-forensics-zip/index.html' as string | null,
+    isPerUserInstance: false,
+    isDraft: false,
+  },
 ];
 
 async function main() {
